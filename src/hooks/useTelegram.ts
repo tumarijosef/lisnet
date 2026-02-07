@@ -30,24 +30,16 @@ export const useTelegram = () => {
         const tgUser = tg.initDataUnsafe?.user;
         const startParam = tg.initDataUnsafe?.start_param || "";
 
-        // DEBUG ALERT: Let's see if Telegram even sees the parameter
-        if (startParam) {
-            console.log('START PARAM DETECTED:', startParam);
-        }
-
         if (tgUser) {
             const syncUser = async () => {
                 try {
                     setLoading(true);
 
-                    // 1. WEB AUTH CONFIRMATION (startapp=auth_ID)
+                    // WEB AUTH CONFIRMATION
                     if (startParam && startParam.startsWith('auth_')) {
                         const sessionId = startParam.replace('auth_', '');
 
-                        // Tell the user we are trying to confirm
-                        tg.showScanQrPopup({ text: 'Confirming Web Login...' });
-
-                        const { data: updateData, error: updateError } = await supabase
+                        const { data: updateData } = await supabase
                             .from('web_auth_sessions')
                             .update({
                                 status: 'confirmed',
@@ -63,19 +55,13 @@ export const useTelegram = () => {
                             .eq('id', sessionId)
                             .select();
 
-                        tg.closeScanQrPopup();
-
-                        if (updateError) {
-                            tg.showAlert('DB Error: ' + updateError.message);
-                        } else if (!updateData || updateData.length === 0) {
-                            tg.showAlert('Session Expired or Not Found. Restart Login on Computer.');
-                        } else {
+                        if (updateData && updateData.length > 0) {
                             tg.HapticFeedback.notificationOccurred('success');
-                            tg.showAlert('SUCCESS! Browser Login Confirmed. You can return to your computer.');
+                            // Silent success - it just works!
                         }
                     }
 
-                    // 2. STANDARD APP SYNC
+                    // STANDARD APP SYNC
                     const { data: userProfile, error } = await supabase.rpc('register_telegram_user', {
                         p_telegram_id: tgUser.id,
                         p_username: tgUser.username || '',
@@ -99,7 +85,7 @@ export const useTelegram = () => {
                     }
 
                 } catch (error: any) {
-                    tg.showAlert('Sync Error: ' + error.message);
+                    console.error('Sync error:', error);
                 } finally {
                     setLoading(false);
                 }
