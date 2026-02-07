@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/useAuthStore';
 import { useLibraryStore } from '../store/useLibraryStore';
-import { Music2, MessageCircle, Smartphone } from 'lucide-react';
+import { Music2, MessageCircle, Smartphone, QrCode } from 'lucide-react';
 
 const LoginPage = () => {
     const { setProfile, setLoading: setStoreLoading } = useAuthStore();
@@ -28,7 +28,7 @@ const LoginPage = () => {
         if (!pendingSessionId || authMode !== 'mini-app') return;
 
         const interval = setInterval(async () => {
-            const { data } = await supabase
+            const { data, error } = await supabase
                 .from('web_auth_sessions')
                 .select('*')
                 .eq('id', pendingSessionId)
@@ -39,7 +39,7 @@ const LoginPage = () => {
                 clearInterval(interval);
                 handleAuthSuccess(data.user_data);
             }
-        }, 2000);
+        }, 1500); // Faster polling
 
         return () => clearInterval(interval);
     }, [pendingSessionId, authMode]);
@@ -47,7 +47,7 @@ const LoginPage = () => {
     const handleAuthSuccess = async (user: any) => {
         try {
             setStoreLoading(true);
-            const { data: userProfile } = await supabase.rpc('register_telegram_user', {
+            const { data: userProfile, error } = await supabase.rpc('register_telegram_user', {
                 p_telegram_id: user.id,
                 p_username: user.username || '',
                 p_full_name: `${user.first_name} ${user.last_name || ''}`.trim(),
@@ -57,6 +57,8 @@ const LoginPage = () => {
             if (userProfile) {
                 setProfile(userProfile);
                 await fetchLibrary(userProfile.id);
+            } else if (error) {
+                console.error('Supabase RPC error:', error);
             }
         } catch (err) {
             console.error('Auth error:', err);
@@ -103,64 +105,74 @@ const LoginPage = () => {
         }, 100);
     };
 
+    const tgLink = pendingSessionId ? `https://t.me/lisnet_bot/app?startapp=auth_${pendingSessionId}` : '';
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(tgLink)}&bgcolor=141414&color=1DB954`;
+
     return (
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-black text-white px-6 overflow-hidden">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#1DB954]/10 rounded-full blur-[120px] pointer-events-none" />
 
             <div className="relative z-10 flex flex-col items-center text-center max-w-sm w-full">
-                <div className="w-20 h-20 bg-gradient-to-br from-[#1DB954] to-[#1ed760] rounded-[24px] flex items-center justify-center mb-8 shadow-2xl shadow-[#1DB954]/20 animate-in zoom-in duration-700">
-                    <Music2 size={40} className="text-black" />
+                <div className="w-16 h-16 bg-gradient-to-br from-[#1DB954] to-[#1ed760] rounded-[20px] flex items-center justify-center mb-6 shadow-2xl shadow-[#1DB954]/20">
+                    <Music2 size={32} className="text-black" />
                 </div>
 
-                <h1 className="text-4xl font-black tracking-tighter mb-3 uppercase">LISNET</h1>
-                <p className="text-white/40 text-sm font-medium mb-12">Connect your world through music.</p>
+                <h1 className="text-3xl font-black tracking-tighter mb-2 uppercase">LISNET</h1>
+                <p className="text-white/40 text-xs font-medium mb-10">Connect your world through music.</p>
 
                 {authMode === 'selection' && (
                     <div className="flex flex-col gap-3 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <button
                             onClick={startMiniAppAuth}
-                            className="w-full h-14 bg-[#1DB954] text-black rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all"
+                            className="w-full h-14 bg-[#1DB954] text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all"
                         >
-                            <Smartphone size={20} />
+                            <Smartphone size={18} />
                             Login via Telegram App
                         </button>
                         <button
                             onClick={loadWidget}
-                            className="w-full h-14 bg-white/5 border border-white/10 text-white rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-wider hover:bg-white/10 transition-all font-sans"
+                            className="w-full h-14 bg-white/5 border border-white/10 text-white rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:bg-white/10 transition-all font-sans"
                         >
-                            <MessageCircle size={20} />
+                            <MessageCircle size={18} />
                             Use Phone Number
                         </button>
                     </div>
                 )}
 
                 {authMode === 'mini-app' && (
-                    <div className="flex flex-col items-center gap-6 p-8 bg-white/5 rounded-3xl border border-white/10 w-full animate-in fade-in zoom-in duration-300">
-                        <div className="relative">
-                            <div className="w-16 h-16 border-4 border-[#1DB954]/20 border-t-[#1DB954] rounded-full animate-spin" />
-                            <Smartphone className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#1DB954]" size={24} />
-                        </div>
-                        <div className="space-y-4">
-                            <div className="space-y-1">
-                                <p className="font-bold text-white uppercase text-xs tracking-widest">Waiting for confirmation</p>
-                                <p className="text-white/40 text-[10px] leading-relaxed uppercase font-black tracking-widest leading-4">Confirm login on your device</p>
-                            </div>
+                    <div className="flex flex-col items-center gap-6 p-6 bg-white/5 rounded-[32px] border border-white/10 w-full animate-in fade-in zoom-in duration-300">
+                        {pendingSessionId ? (
+                            <>
+                                <div className="space-y-4 w-full">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <p className="font-bold text-white uppercase text-[10px] tracking-widest">Scan or Click to Confirm</p>
+                                        <p className="text-white/40 text-[9px] uppercase font-black tracking-widest leading-3 px-8 text-center">Fastest way to login from Safari/Mac</p>
+                                    </div>
 
-                            {pendingSessionId ? (
-                                <div className="flex flex-col gap-3">
-                                    <a
-                                        href={`https://t.me/lisnet_bot/app?startapp=auth_${pendingSessionId}`}
-                                        className="inline-block px-8 py-5 bg-[#0088cc] text-white rounded-2xl font-black text-[14px] uppercase tracking-widest hover:bg-[#0099e6] transition-all shadow-xl shadow-[#0088cc]/30 active:scale-95"
-                                    >
-                                        Log In with Telegram
-                                    </a>
-                                    <p className="text-[9px] text-white/30 uppercase font-bold tracking-tight">Clicking above will open Telegram</p>
+                                    {/* QR Code */}
+                                    <div className="w-52 h-52 bg-[#141414] rounded-3xl p-4 border border-white/5 mx-auto group relative overflow-hidden">
+                                        <img src={qrUrl} alt="Login QR Code" className="w-full h-full opacity-90 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                                            <QrCode size={100} className="text-[#1DB954]" />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <a
+                                            href={tgLink}
+                                            className="inline-block px-8 py-4 bg-[#0088cc] text-white rounded-xl font-black text-[11px] uppercase tracking-widest hover:bg-[#0099e6] transition-all active:scale-95"
+                                        >
+                                            Open Telegram
+                                        </a>
+                                    </div>
                                 </div>
-                            ) : (
-                                <p className="text-[10px] text-white/20 uppercase font-black">Initializing session...</p>
-                            )}
-                        </div>
-                        <button onClick={() => setAuthMode('selection')} className="text-[10px] text-white/30 uppercase font-black hover:text-white transition-colors text-center w-full mt-4">Go Back</button>
+                            </>
+                        ) : (
+                            <div className="py-20">
+                                <div className="w-12 h-12 border-4 border-[#1DB954]/20 border-t-[#1DB954] rounded-full animate-spin mx-auto" />
+                            </div>
+                        )}
+                        <button onClick={() => setAuthMode('selection')} className="text-[9px] text-white/30 uppercase font-black hover:text-white transition-colors py-2">Go Back</button>
                     </div>
                 )}
 
@@ -172,15 +184,12 @@ const LoginPage = () => {
                         <button onClick={() => setAuthMode('selection')} className="text-[10px] text-white/30 uppercase font-black hover:text-white">Back to options</button>
                     </div>
                 )}
-
-                <div className="mt-12 flex items-center gap-2 text-[10px] text-white/20 uppercase font-black tracking-[0.2em]">
-                    <MessageCircle size={12} />
-                    Secure Telegram OAuth
-                </div>
             </div>
 
-            <div className="absolute bottom-8 text-[10px] font-black text-white/10 tracking-widest uppercase">
-                Lisnet Web v1.0.6
+            <div className="absolute bottom-8 flex items-center gap-3">
+                <div className="h-px w-8 bg-white/5"></div>
+                <div className="text-[9px] font-black text-white/10 tracking-widest uppercase">Lisnet Web v1.0.7</div>
+                <div className="h-px w-8 bg-white/5"></div>
             </div>
         </div>
     );
