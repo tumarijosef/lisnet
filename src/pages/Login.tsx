@@ -35,6 +35,7 @@ const LoginPage = () => {
                 .single();
 
             if (data && data.status === 'confirmed' && data.user_data) {
+                console.log('Login confirmed from polling!');
                 clearInterval(interval);
                 handleAuthSuccess(data.user_data);
             }
@@ -66,7 +67,9 @@ const LoginPage = () => {
 
     const startMiniAppAuth = async () => {
         try {
-            const { data } = await supabase
+            setAuthMode('mini-app');
+
+            const { data, error } = await supabase
                 .from('web_auth_sessions')
                 .insert([{ status: 'pending' }])
                 .select()
@@ -74,17 +77,14 @@ const LoginPage = () => {
 
             if (data) {
                 setPendingSessionId(data.id);
-                setAuthMode('mini-app');
-
-                const tgLink = `https://t.me/lisnet_bot/app?startapp=auth_${data.id}`;
-
-                // Try direct redirect
-                setTimeout(() => {
-                    window.location.assign(tgLink);
-                }, 500);
+                console.log('Session initialized:', data.id);
+            } else {
+                console.error('Failed to init session:', error);
+                setAuthMode('selection');
             }
         } catch (err) {
             console.error('Failed to start session:', err);
+            setAuthMode('selection');
         }
     };
 
@@ -126,7 +126,7 @@ const LoginPage = () => {
                         </button>
                         <button
                             onClick={loadWidget}
-                            className="w-full h-14 bg-white/5 border border-white/10 text-white rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-wider hover:bg-white/10 transition-all"
+                            className="w-full h-14 bg-white/5 border border-white/10 text-white rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-wider hover:bg-white/10 transition-all font-sans"
                         >
                             <MessageCircle size={20} />
                             Use Phone Number
@@ -142,16 +142,23 @@ const LoginPage = () => {
                         </div>
                         <div className="space-y-4">
                             <div className="space-y-1">
-                                <p className="font-bold text-white uppercase text-xs tracking-widest">Waiting for App</p>
-                                <p className="text-white/40 text-[10px] leading-relaxed uppercase font-black tracking-widest leading-4">Opening Telegram...</p>
+                                <p className="font-bold text-white uppercase text-xs tracking-widest">Waiting for confirmation</p>
+                                <p className="text-white/40 text-[10px] leading-relaxed uppercase font-black tracking-widest leading-4">Confirm login on your device</p>
                             </div>
 
-                            <a
-                                href={`https://t.me/lisnet_bot/app?startapp=auth_${pendingSessionId}`}
-                                className="inline-block px-8 py-4 bg-[#0088cc] text-white rounded-2xl font-black text-[12px] uppercase tracking-widest hover:bg-[#0099e6] transition-all shadow-xl shadow-[#0088cc]/20 active:scale-95"
-                            >
-                                Open Telegram
-                            </a>
+                            {pendingSessionId ? (
+                                <div className="flex flex-col gap-3">
+                                    <a
+                                        href={`https://t.me/lisnet_bot/app?startapp=auth_${pendingSessionId}`}
+                                        className="inline-block px-8 py-5 bg-[#0088cc] text-white rounded-2xl font-black text-[14px] uppercase tracking-widest hover:bg-[#0099e6] transition-all shadow-xl shadow-[#0088cc]/30 active:scale-95"
+                                    >
+                                        Log In with Telegram
+                                    </a>
+                                    <p className="text-[9px] text-white/30 uppercase font-bold tracking-tight">Clicking above will open Telegram</p>
+                                </div>
+                            ) : (
+                                <p className="text-[10px] text-white/20 uppercase font-black">Initializing session...</p>
+                            )}
                         </div>
                         <button onClick={() => setAuthMode('selection')} className="text-[10px] text-white/30 uppercase font-black hover:text-white transition-colors text-center w-full mt-4">Go Back</button>
                     </div>
@@ -173,7 +180,7 @@ const LoginPage = () => {
             </div>
 
             <div className="absolute bottom-8 text-[10px] font-black text-white/10 tracking-widest uppercase">
-                Lisnet Web v1.0.5
+                Lisnet Web v1.0.6
             </div>
         </div>
     );
