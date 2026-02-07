@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/useAuthStore';
 import { useLibraryStore } from '../store/useLibraryStore';
-import { Music2, MessageCircle, Smartphone, QrCode, Copy, Check } from 'lucide-react';
+import { Music2, MessageCircle, Smartphone, QrCode, Copy, Check, ExternalLink } from 'lucide-react';
 
 const LoginPage = () => {
     const { setProfile, setLoading: setStoreLoading } = useAuthStore();
@@ -74,9 +74,7 @@ const LoginPage = () => {
                 .select()
                 .single();
 
-            if (data) {
-                setPendingSessionId(data.id);
-            }
+            if (data) setPendingSessionId(data.id);
         } catch (err) {
             setAuthMode('selection');
         }
@@ -97,11 +95,13 @@ const LoginPage = () => {
         }, 100);
     };
 
-    const tgLink = `https://t.me/lisnet_bot/app?startapp=auth_${pendingSessionId}`;
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(tgLink)}&bgcolor=141414&color=1DB954`;
+    // More universal link formats
+    const tgLinkApp = `https://t.me/lisnet_bot/app?startapp=auth_${pendingSessionId}`;
+    const tgLinkDirect = `https://t.me/lisnet_bot?startapp=auth_${pendingSessionId}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(tgLinkApp)}&bgcolor=141414&color=1DB954`;
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(tgLink);
+        navigator.clipboard.writeText(tgLinkApp);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -115,8 +115,8 @@ const LoginPage = () => {
                     <Music2 size={32} className="text-black" />
                 </div>
 
-                <h1 className="text-3xl font-black tracking-tighter mb-2 uppercase">LISNET</h1>
-                <p className="text-white/40 text-[11px] font-medium mb-10">Connect your world through music.</p>
+                <h1 className="text-3xl font-black tracking-tighter mb-2 uppercase italic">LISNET</h1>
+                <p className="text-white/40 text-[10px] font-bold mb-10 tracking-widest uppercase">Digital Sound Identity</p>
 
                 {authMode === 'selection' && (
                     <div className="flex flex-col gap-3 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -140,14 +140,14 @@ const LoginPage = () => {
                 {authMode === 'mini-app' && (
                     <div className="flex flex-col items-center gap-6 p-6 bg-white/5 rounded-[32px] border border-white/10 w-full animate-in fade-in zoom-in duration-300">
                         <div className="space-y-4 w-full">
-                            <div className="flex flex-col items-center gap-2">
-                                <p className="font-bold text-white uppercase text-[10px] tracking-widest">Waiting for App</p>
-                                <p className="text-white/40 text-[9px] uppercase font-black tracking-widest leading-3 px-8 text-center">Scan QR with phone OR click button</p>
+                            <div className="flex flex-col items-center gap-1">
+                                <p className="font-bold text-white uppercase text-[9px] tracking-[0.2em]">Authentication Required</p>
+                                <p className="text-white/20 text-[8px] uppercase font-bold tracking-widest leading-3 px-8 text-center">Scan QR or use direct buttons</p>
                             </div>
 
-                            <div className="w-48 h-48 bg-[#141414] rounded-3xl p-4 border border-white/5 mx-auto flex items-center justify-center relative">
+                            <div className="w-44 h-44 bg-[#141414] rounded-2xl p-4 border border-white/5 mx-auto flex items-center justify-center relative shadow-inner">
                                 {pendingSessionId ? (
-                                    <img src={qrUrl} alt="QR Code" className="w-full h-full opacity-90" />
+                                    <img src={qrUrl} alt="QR Code" className="w-full h-full opacity-100" />
                                 ) : (
                                     <div className="w-8 h-8 border-2 border-[#1DB954]/20 border-t-[#1DB954] rounded-full animate-spin" />
                                 )}
@@ -155,21 +155,30 @@ const LoginPage = () => {
 
                             <div className="flex flex-col gap-2">
                                 <a
-                                    href={tgLink}
-                                    className="w-full h-12 bg-[#0088cc] text-white rounded-xl flex items-center justify-center font-black text-[10px] uppercase tracking-widest hover:bg-[#0099e6] transition-all"
+                                    href={tgLinkApp}
+                                    className="w-full h-12 bg-[#1DB954] text-black rounded-xl flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all active:scale-95"
                                 >
-                                    Open Telegram
+                                    Login with App
+                                    <ExternalLink size={12} />
                                 </a>
-                                <button
-                                    onClick={copyToClipboard}
-                                    className="w-full h-10 bg-white/5 text-white/40 rounded-xl flex items-center justify-center gap-2 font-bold text-[9px] uppercase tracking-widest hover:text-white transition-all"
-                                >
-                                    {copied ? <Check size={12} className="text-[#1DB954]" /> : <Copy size={12} />}
-                                    {copied ? 'Copied' : 'Copy Direct Link'}
-                                </button>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <a
+                                        href={tgLinkDirect}
+                                        className="h-10 bg-white/5 text-white/60 rounded-xl flex items-center justify-center font-bold text-[8px] uppercase tracking-widest hover:bg-white/10 transition-all"
+                                    >
+                                        Alt Link
+                                    </a>
+                                    <button
+                                        onClick={copyToClipboard}
+                                        className="h-10 bg-white/5 text-white/60 rounded-xl flex items-center justify-center gap-2 font-bold text-[8px] uppercase tracking-widest hover:bg-white/10 transition-all"
+                                    >
+                                        {copied ? <Check size={10} className="text-[#1DB954]" /> : <Copy size={10} />}
+                                        {copied ? 'Done' : 'Copy link'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <button onClick={() => setAuthMode('selection')} className="text-[9px] text-white/30 uppercase font-black hover:text-white pt-2">Go Back</button>
+                        <button onClick={() => setAuthMode('selection')} className="text-[9px] text-white/30 uppercase font-black hover:text-white pt-2 tracking-widest">Cancel</button>
                     </div>
                 )}
 
@@ -178,13 +187,15 @@ const LoginPage = () => {
                         <div className="w-full h-[54px] bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center">
                             <div ref={widgetRef}></div>
                         </div>
-                        <button onClick={() => setAuthMode('selection')} className="text-[10px] text-white/30 uppercase font-black hover:text-white">Back to options</button>
+                        <button onClick={() => setAuthMode('selection')} className="text-[10px] text-white/30 uppercase font-black hover:text-white pt-4">Back to home</button>
                     </div>
                 )}
             </div>
 
-            <div className="absolute bottom-8 text-[9px] font-black text-white/10 tracking-[0.3em] uppercase">
-                Lisnet Web v1.0.8
+            <div className="absolute bottom-8 flex items-center gap-4">
+                <div className="h-px w-6 bg-white/5"></div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.0.9</div>
+                <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
     );
