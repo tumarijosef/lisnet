@@ -19,11 +19,14 @@ import MusicLibrary from './pages/admin/MusicLibrary';
 import Finance from './pages/admin/Finance';
 import Requests from './pages/admin/Requests';
 import ArtistManageReleases from './pages/ArtistManageReleases';
+import LoginPage from './pages/Login';
 import { useTelegram } from './hooks/useTelegram';
+import { useAuthStore } from './store/useAuthStore';
 import { useThemeStore } from './store/useThemeStore';
 import { useEffect } from 'react';
 
 function App() {
+    const { loading, profile } = useAuthStore();
     useTelegram(); // Initialize Telegram WebApp and sync user
     const { theme } = useThemeStore();
 
@@ -32,6 +35,18 @@ function App() {
         root.classList.remove('theme-original', 'theme-skynet');
         root.classList.add(`theme-${theme}`);
     }, [theme]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-[#1DB954] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (!profile) {
+        return <LoginPage />;
+    }
 
     return (
         <Routes>

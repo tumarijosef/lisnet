@@ -1,6 +1,7 @@
-import { X, Check, ChevronRight, ChevronLeft, Globe, Palette } from 'lucide-react';
+import { X, Check, ChevronRight, ChevronLeft, Globe, Palette, LogOut } from 'lucide-react';
 import { useLanguageStore, Language } from '../store/useLanguageStore';
 import { useThemeStore, Theme } from '../store/useThemeStore';
+import { useAuthStore } from '../store/useAuthStore';
 import { translations } from '../lib/translations';
 import { useState } from 'react';
 
@@ -97,6 +98,21 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                                 </div>
                             </div>
                             <ChevronRight size={20} className="text-white/20 group-hover:text-white transition-colors" />
+                        </button>
+
+                        <div className="h-[1px] bg-white/5 my-4 mx-4" />
+
+                        <button
+                            onClick={() => {
+                                onClose();
+                                useAuthStore.getState().logout();
+                            }}
+                            className="flex items-center gap-4 p-5 text-red-500 hover:bg-red-500/10 rounded-2xl transition-all"
+                        >
+                            <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
+                                <LogOut size={20} />
+                            </div>
+                            <span className="font-bold text-base uppercase tracking-tighter">Log Out</span>
                         </button>
                     </div>
                 )}

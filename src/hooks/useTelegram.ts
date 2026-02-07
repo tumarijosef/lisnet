@@ -18,7 +18,13 @@ export const useTelegram = () => {
 
     useEffect(() => {
         const tg = window.Telegram?.WebApp;
-        if (!tg) {
+
+        // If we are NOT in Telegram WebApp
+        if (!tg || !tg.initData) {
+            // Already have a profile from persistence?
+            if (profile) {
+                fetchLibrary(profile.id);
+            }
             setLoading(false);
             return;
         }
