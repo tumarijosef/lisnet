@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --radius: 0.75rem;
+  --bg-main: #121212;
+  --bg-card: #181818;
+  --accent: #1DB954;
+  --text-main: #FFFFFF;
+  --text-dim: #B3B3B3;
+  --font-main: 'Circular Std', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  overflow-x: hidden;
+  transition: all 0.3s ease;
+}
+
+/* ============================================================
+   SKYNET THEME (Windows XP Luna - Clean Light)
+   ============================================================ */
+.theme-skynet {
+  --font-main: 'Inter', sans-serif;
+  --xp-bg: #ece9d8;
+  --xp-window: #ffffff;
+}
+
+/* 1. Global Shape Reset - NO ROUNDED CORNERS */
+.theme-skynet,
+.theme-skynet * {
+  border-radius: 0 !important;
+}
+
+/* 2. FORCE LIGHT BACKGROUNDS EVERYWHERE ON MAIN CONTENT (EXCEPT HEADER/NAV) */
+.theme-skynet body,
+.theme-skynet #root,
+.theme-skynet main,
+.theme-skynet .min-h-screen,
+.theme-skynet [class*="bg-[#121212]"],
+.theme-skynet [class*="bg-black"]:not(nav):not(header),
+.theme-skynet [class*="from-"]:not(nav):not(header),
+.theme-skynet [class*="to-"]:not(nav):not(header),
+.theme-skynet section,
+.theme-skynet .bg-gradient-to-b {
+  background-color: var(--xp-bg) !important;
+  background-image: none !important;
+}
+
+/* 3. Global Text Visibility - FORCE BLACK IN CONTENT AREA */
+.theme-skynet main *,
+.theme-skynet main h1,
+.theme-skynet main h2,
+.theme-skynet main h3,
+.theme-skynet main h4,
+.theme-skynet main p,
+.theme-skynet main span,
+.theme-skynet main div {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* 4. Exceptions for Blue Header/Footer (Taskbar) */
+.theme-skynet header,
+.theme-skynet nav,
+.theme-skynet header *,
+.theme-skynet nav * {
+  background-color: #245dd7 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+.theme-skynet nav {
+  border-top: 1px solid #00309c !important;
+}
+
+/* 5. Window Modules (Cards) */
+.theme-skynet article,
+.theme-skynet section>div.grid>div,
+.theme-skynet [class*="bg-[#181818]"] {
+  background-color: var(--xp-window) !important;
+  border: 1px solid #00309c !important;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden !important;
+}
+
+.theme-skynet article::before,
+.theme-skynet section>div.grid>div::before,
+.theme-skynet [class*="bg-[#2A2A2A]"]::before {
+  content: "";
+  display: block;
+  height: 24px;
+  background: linear-gradient(to bottom, #0058e6 0%, #3a93ff 10%, #0058e6 90%, #00309c 100%) !important;
+  border-bottom: 1px solid #00309c !important;
+}
+
+/* Restore content padding inside blocks */
+.theme-skynet article>div,
+.theme-skynet section>div.grid>div>div {
+  padding: 12px !important;
+}
+
+/* 6. PLAYER PROTECTION - DO NOT FORCE BLACK TEXT HERE (Handled by component) */
+.theme-skynet .expanded-player-window,
+.theme-skynet .expanded-player-window *,
+.theme-skynet .mini-player-container,
+.theme-skynet .mini-player-container * {
+  color: inherit !important;
+  /* Let React component decide */
+  text-shadow: inherit !important;
+}
+
+.theme-skynet .mini-player-container {
+  background-color: #181818 !important;
+}
+
+/* XP Blue Gradient Block */
+.theme-skynet .bg-gradient-to-br:first-child {
+  background: linear-gradient(to bottom, #538df0 0%, #245dd7 100%) !important;
+}
+
+.theme-skynet .bg-gradient-to-br:first-child * {
+  color: #ffffff !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@layer base {
+  button {
+    @apply active:scale-95 transition-transform;
+  }
+}
