@@ -65,16 +65,26 @@ const LoginPage = () => {
     };
 
     const startMiniAppAuth = async () => {
-        const { data } = await supabase
-            .from('web_auth_sessions')
-            .insert([{ status: 'pending' }])
-            .select()
-            .single();
+        try {
+            const { data } = await supabase
+                .from('web_auth_sessions')
+                .insert([{ status: 'pending' }])
+                .select()
+                .single();
 
-        if (data) {
-            setPendingSessionId(data.id);
-            setAuthMode('mini-app');
-            window.open(`https://t.me/lisnet_bot/app?startapp=auth_${data.id}`, '_blank');
+            if (data) {
+                setPendingSessionId(data.id);
+                setAuthMode('mini-app');
+
+                const tgLink = `https://t.me/lisnet_bot/app?startapp=auth_${data.id}`;
+
+                // Try direct redirect
+                setTimeout(() => {
+                    window.location.assign(tgLink);
+                }, 500);
+            }
+        } catch (err) {
+            console.error('Failed to start session:', err);
         }
     };
 
@@ -130,11 +140,20 @@ const LoginPage = () => {
                             <div className="w-16 h-16 border-4 border-[#1DB954]/20 border-t-[#1DB954] rounded-full animate-spin" />
                             <Smartphone className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#1DB954]" size={24} />
                         </div>
-                        <div className="space-y-2">
-                            <p className="font-bold text-white uppercase text-xs tracking-widest">Waiting for App</p>
-                            <p className="text-white/40 text-[10px] leading-relaxed uppercase font-black tracking-widest leading-4">Confirm login in your Telegram App</p>
+                        <div className="space-y-4">
+                            <div className="space-y-1">
+                                <p className="font-bold text-white uppercase text-xs tracking-widest">Waiting for App</p>
+                                <p className="text-white/40 text-[10px] leading-relaxed uppercase font-black tracking-widest leading-4">Opening Telegram...</p>
+                            </div>
+
+                            <a
+                                href={`https://t.me/lisnet_bot/app?startapp=auth_${pendingSessionId}`}
+                                className="inline-block px-8 py-4 bg-[#0088cc] text-white rounded-2xl font-black text-[12px] uppercase tracking-widest hover:bg-[#0099e6] transition-all shadow-xl shadow-[#0088cc]/20 active:scale-95"
+                            >
+                                Open Telegram
+                            </a>
                         </div>
-                        <button onClick={() => setAuthMode('selection')} className="text-[10px] text-white/30 uppercase font-black hover:text-white transition-colors">Go Back</button>
+                        <button onClick={() => setAuthMode('selection')} className="text-[10px] text-white/30 uppercase font-black hover:text-white transition-colors text-center w-full mt-4">Go Back</button>
                     </div>
                 )}
 
