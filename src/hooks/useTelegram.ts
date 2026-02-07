@@ -30,15 +30,22 @@ export const useTelegram = () => {
         const tgUser = tg.initDataUnsafe?.user;
         const startParam = tg.initDataUnsafe?.start_param || "";
 
+        // DEBUG ALERT: Let's see if Telegram even sees the parameter
+        if (startParam) {
+            console.log('START PARAM DETECTED:', startParam);
+        }
+
         if (tgUser) {
             const syncUser = async () => {
                 try {
                     setLoading(true);
 
-                    // 1. WEB AUTH CONFIRMATION
+                    // 1. WEB AUTH CONFIRMATION (startapp=auth_ID)
                     if (startParam && startParam.startsWith('auth_')) {
                         const sessionId = startParam.replace('auth_', '');
-                        console.log('Detected auth request for session:', sessionId);
+
+                        // Tell the user we are trying to confirm
+                        tg.showScanQrPopup({ text: 'Confirming Web Login...' });
 
                         const { data: updateData, error: updateError } = await supabase
                             .from('web_auth_sessions')
@@ -56,16 +63,15 @@ export const useTelegram = () => {
                             .eq('id', sessionId)
                             .select();
 
+                        tg.closeScanQrPopup();
+
                         if (updateError) {
-                            console.error('Database update error:', updateError);
                             tg.showAlert('DB Error: ' + updateError.message);
                         } else if (!updateData || updateData.length === 0) {
-                            console.error('Session not found in DB');
-                            tg.showAlert('Error: Session not found. Refresh the login page on your computer.');
+                            tg.showAlert('Session Expired or Not Found. Restart Login on Computer.');
                         } else {
-                            console.log('Web auth confirmed successfully!');
                             tg.HapticFeedback.notificationOccurred('success');
-                            tg.showAlert('Login Confirmed! You can now return to the browser on your computer.');
+                            tg.showAlert('SUCCESS! Browser Login Confirmed. You can return to your computer.');
                         }
                     }
 
@@ -93,8 +99,7 @@ export const useTelegram = () => {
                     }
 
                 } catch (error: any) {
-                    console.error('Critical sync error:', error);
-                    tg.showAlert('System Error: ' + (error.message || 'Unknown error'));
+                    tg.showAlert('Sync Error: ' + error.message);
                 } finally {
                     setLoading(false);
                 }
@@ -102,7 +107,6 @@ export const useTelegram = () => {
 
             syncUser();
         } else {
-            console.warn('Telegram user data missing');
             setLoading(false);
         }
     }, [setProfile, setLoading, fetchLibrary]);
