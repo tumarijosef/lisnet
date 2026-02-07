@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/useAuthStore';
 import { useLibraryStore } from '../store/useLibraryStore';
 
-// Accessing window.Telegram
 declare global {
     interface Window {
         Telegram: {
@@ -19,12 +18,8 @@ export const useTelegram = () => {
     useEffect(() => {
         const tg = window.Telegram?.WebApp;
 
-        // If we are NOT in Telegram WebApp
         if (!tg || !tg.initData) {
-            // Already have a profile from persistence?
-            if (profile) {
-                fetchLibrary(profile.id);
-            }
+            if (profile) fetchLibrary(profile.id);
             setLoading(false);
             return;
         }
@@ -33,16 +28,17 @@ export const useTelegram = () => {
         tg.expand();
 
         const tgUser = tg.initDataUnsafe?.user;
-        const startParam = tg.initDataUnsafe?.start_param;
+        const startParam = tg.initDataUnsafe?.start_param || "";
 
         if (tgUser) {
             const syncUser = async () => {
                 try {
                     setLoading(true);
 
-                    // 1. Check for web auth confirmation (startapp=auth_ID)
-                    if (startParam && startParam.startsWith('auth_')) {
+                    // If started from web auth link (startapp=auth_ID)
+                    if (startParam.startsWith('auth_')) {
                         const sessionId = startParam.replace('auth_', '');
+
                         await supabase
                             .from('web_auth_sessions')
                             .update({
@@ -59,11 +55,10 @@ export const useTelegram = () => {
                             .eq('id', sessionId);
 
                         tg.HapticFeedback.notificationOccurred('success');
-                        tg.showScanQrPopup({ text: 'Web Auth Confirmed!' });
-                        setTimeout(() => tg.closeScanQrPopup(), 2000);
+                        tg.showAlert('Web Login Confirmed! You can return to your browser.');
                     }
 
-                    // 2. Normal Mini App Sync
+                    // Standard login/sync
                     const { data: userProfile, error } = await supabase.rpc('register_telegram_user', {
                         p_telegram_id: tgUser.id,
                         p_username: tgUser.username || '',
@@ -71,28 +66,23 @@ export const useTelegram = () => {
                         p_avatar_url: tgUser.photo_url || `https://ui-avatars.com/api/?name=${tgUser.username || tgUser.first_name}&background=random`
                     });
 
-                    if (error) {
-                        console.error('Error registering telegram user:', error);
+                    if (userProfile) {
+                        setProfile(userProfile);
+                        await fetchLibrary(userProfile.id);
+                    } else if (error) {
                         const { data: existingProfile } = await supabase
                             .from('profiles')
                             .select('*')
                             .eq('telegram_id', tgUser.id)
                             .single();
-
                         if (existingProfile) {
                             setProfile(existingProfile);
                             await fetchLibrary(existingProfile.id);
                         }
-                        return;
-                    }
-
-                    if (userProfile) {
-                        setProfile(userProfile);
-                        await fetchLibrary(userProfile.id);
                     }
 
                 } catch (error) {
-                    console.error('Error syncing Telegram user:', error);
+                    console.error('Sync error:', error);
                 } finally {
                     setLoading(false);
                 }
