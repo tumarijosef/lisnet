@@ -1,7 +1,4 @@
 {
-    "rewriteConfig": {
-        "dynamicImageProcessing": true
-    },
     "rewrites": [
         {
             "source": "/(.*)",
