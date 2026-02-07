@@ -35,11 +35,12 @@ export const useTelegram = () => {
                 try {
                     setLoading(true);
 
-                    // If started from web auth link (startapp=auth_ID)
-                    if (startParam.startsWith('auth_')) {
+                    // 1. WEB AUTH CONFIRMATION
+                    if (startParam && startParam.startsWith('auth_')) {
                         const sessionId = startParam.replace('auth_', '');
+                        console.log('Detected auth request for session:', sessionId);
 
-                        await supabase
+                        const { data: updateData, error: updateError } = await supabase
                             .from('web_auth_sessions')
                             .update({
                                 status: 'confirmed',
@@ -52,13 +53,23 @@ export const useTelegram = () => {
                                     photo_url: tgUser.photo_url
                                 }
                             })
-                            .eq('id', sessionId);
+                            .eq('id', sessionId)
+                            .select();
 
-                        tg.HapticFeedback.notificationOccurred('success');
-                        tg.showAlert('Web Login Confirmed! You can return to your browser.');
+                        if (updateError) {
+                            console.error('Database update error:', updateError);
+                            tg.showAlert('DB Error: ' + updateError.message);
+                        } else if (!updateData || updateData.length === 0) {
+                            console.error('Session not found in DB');
+                            tg.showAlert('Error: Session not found. Refresh the login page on your computer.');
+                        } else {
+                            console.log('Web auth confirmed successfully!');
+                            tg.HapticFeedback.notificationOccurred('success');
+                            tg.showAlert('Login Confirmed! You can now return to the browser on your computer.');
+                        }
                     }
 
-                    // Standard login/sync
+                    // 2. STANDARD APP SYNC
                     const { data: userProfile, error } = await supabase.rpc('register_telegram_user', {
                         p_telegram_id: tgUser.id,
                         p_username: tgUser.username || '',
@@ -81,8 +92,9 @@ export const useTelegram = () => {
                         }
                     }
 
-                } catch (error) {
-                    console.error('Sync error:', error);
+                } catch (error: any) {
+                    console.error('Critical sync error:', error);
+                    tg.showAlert('System Error: ' + (error.message || 'Unknown error'));
                 } finally {
                     setLoading(false);
                 }
@@ -90,6 +102,7 @@ export const useTelegram = () => {
 
             syncUser();
         } else {
+            console.warn('Telegram user data missing');
             setLoading(false);
         }
     }, [setProfile, setLoading, fetchLibrary]);
