@@ -33,14 +33,37 @@ export const useTelegram = () => {
         tg.expand();
 
         const tgUser = tg.initDataUnsafe?.user;
+        const startParam = tg.initDataUnsafe?.start_param;
 
         if (tgUser) {
             const syncUser = async () => {
                 try {
                     setLoading(true);
 
-                    // Use the SECURITY DEFINER function to register or login the user
-                    // This bypasses RLS issues for new users
+                    // 1. Check for web auth confirmation (startapp=auth_ID)
+                    if (startParam && startParam.startsWith('auth_')) {
+                        const sessionId = startParam.replace('auth_', '');
+                        await supabase
+                            .from('web_auth_sessions')
+                            .update({
+                                status: 'confirmed',
+                                telegram_id: tgUser.id,
+                                user_data: {
+                                    id: tgUser.id,
+                                    username: tgUser.username,
+                                    first_name: tgUser.first_name,
+                                    last_name: tgUser.last_name,
+                                    photo_url: tgUser.photo_url
+                                }
+                            })
+                            .eq('id', sessionId);
+
+                        tg.HapticFeedback.notificationOccurred('success');
+                        tg.showScanQrPopup({ text: 'Web Auth Confirmed!' });
+                        setTimeout(() => tg.closeScanQrPopup(), 2000);
+                    }
+
+                    // 2. Normal Mini App Sync
                     const { data: userProfile, error } = await supabase.rpc('register_telegram_user', {
                         p_telegram_id: tgUser.id,
                         p_username: tgUser.username || '',
@@ -50,7 +73,6 @@ export const useTelegram = () => {
 
                     if (error) {
                         console.error('Error registering telegram user:', error);
-                        // Fallback: try direct select if RPC fails (though RPC is preferred)
                         const { data: existingProfile } = await supabase
                             .from('profiles')
                             .select('*')
