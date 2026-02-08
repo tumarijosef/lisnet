@@ -84,7 +84,7 @@ const Feed = () => {
     };
 
     return (
-        <div className="flex flex-col gap-8 p-4 pt-6 bg-gradient-to-b from-[#1E1E1E] to-[#121212] min-h-screen">
+        <div className="flex flex-col gap-8 p-4 pt-6 pb-20">
             <SettingsModal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} />
             <NotificationsModal isOpen={isNotificationsModalOpen} onClose={() => setIsNotificationsModalOpen(false)} />
 

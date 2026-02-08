@@ -68,7 +68,7 @@ const Community = () => {
     if (!profile) return null;
 
     return (
-        <div className="flex flex-col gap-6 p-4 pt-6 bg-[#121212] min-h-screen pb-32">
+        <div className="flex flex-col gap-6 p-4 pt-6 pb-32">
             <CreatePostModal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
