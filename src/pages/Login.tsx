@@ -119,20 +119,34 @@ const LoginPage = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#1DB954]/10 rounded-full blur-[120px] pointer-events-none" />
 
             <div className="relative z-10 flex flex-col items-center text-center max-w-sm w-full">
-                <div className="w-24 h-24 mb-6 animate-in zoom-in duration-700">
-                    <img
-                        src="/lisnetlogo.png"
-                        alt="Lisnet Logo"
-                        className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(29,185,84,0.3)]"
-                        onError={(e) => {
-                            // Fallback if logo is missing
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.parentElement!.innerHTML = '<div class="w-20 h-20 bg-[#1DB954] rounded-[24px] flex items-center justify-center shadow-2xl shadow-[#1DB954]/20"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>';
-                        }}
-                    />
+                <div className="mb-10 animate-in zoom-in duration-700">
+                    <div className="relative w-48 h-20 flex items-center justify-center">
+                        {/* Orbital Swirl */}
+                        <svg viewBox="0 0 200 80" className="absolute w-full h-full opacity-30">
+                            <ellipse
+                                cx="100" cy="40" rx="90" ry="35"
+                                fill="none" stroke="white" strokeWidth="0.5"
+                                className="animate-[pulse_4s_ease-in-out_infinite]"
+                                transform="rotate(-5, 100, 40)"
+                            />
+                        </svg>
+
+                        {/* LisNet Text */}
+                        <div className="relative flex items-center font-sans tracking-tight">
+                            <span className="text-5xl font-black text-[#FF0000] relative">
+                                L
+                                <span className="relative">
+                                    i
+                                    <span className="absolute -top-1 left-1.5 w-2 h-2 bg-[#FF0000] rounded-full shadow-[0_0_10px_#FF0000]" />
+                                </span>
+                                s
+                            </span>
+                            <span className="text-5xl font-black text-white ml-0.5">Net</span>
+                        </div>
+                    </div>
                 </div>
 
-                <h1 className="text-4xl font-black tracking-tighter mb-12 uppercase">LISNET</h1>
+                <h1 className="sr-only">LISNET</h1>
 
                 {authMode === 'selection' && (
                     <div className="flex flex-col gap-3 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -228,7 +242,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.2</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.3</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
