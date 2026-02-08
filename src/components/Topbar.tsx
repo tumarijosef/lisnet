@@ -56,19 +56,8 @@ const Topbar = () => {
             <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
             <NotificationsModal isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} />
 
-            {/* Left Section: Status & Personal Avatar */}
-            <div className="flex-1 flex items-center gap-6">
-                <div
-                    onClick={() => navigate('/feed')}
-                    className="flex flex-col cursor-pointer group active:scale-95 transition-all"
-                >
-                    <span className="text-[11px] font-black text-white uppercase tracking-tight leading-none group-hover:text-[#1DB954] transition-colors">LISNET</span>
-                    <span className="text-[8px] text-[#1DB954] font-black uppercase tracking-widest flex items-center gap-1 mt-0.5">
-                        <span className="w-1 h-1 rounded-full bg-[#1DB954] animate-pulse"></span>
-                        ONLINE
-                    </span>
-                </div>
-
+            {/* Left Section: Personal Avatar & Status */}
+            <div className="flex-1 flex items-center gap-4">
                 {/* Personal Avatar - Clickable to Profile */}
                 <div
                     onClick={() => navigate('/profile')}
@@ -83,6 +72,17 @@ const Topbar = () => {
                         className="w-full h-full object-cover"
                         alt=""
                     />
+                </div>
+
+                <div
+                    onClick={() => navigate('/feed')}
+                    className="flex flex-col cursor-pointer group active:scale-95 transition-all"
+                >
+                    <span className="text-[11px] font-black text-white uppercase tracking-tight leading-none group-hover:text-[#1DB954] transition-colors">LISNET</span>
+                    <span className="text-[8px] text-[#1DB954] font-black uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                        <span className="w-1 h-1 rounded-full bg-[#1DB954] animate-pulse"></span>
+                        ONLINE
+                    </span>
                 </div>
             </div>
 
