@@ -42,6 +42,7 @@ function App() {
         // Listen for Supabase auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             if (event === 'SIGNED_IN' && session) {
+                setLoading(true);
                 await refreshProfile();
                 setLoading(false);
             } else if (event === 'SIGNED_OUT') {
@@ -51,11 +52,14 @@ function App() {
 
         // Check current session on mount
         const initAuth = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                await refreshProfile();
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    await refreshProfile();
+                }
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
         initAuth();
 

@@ -30,11 +30,41 @@ export const useAuthStore = create<AuthState>()(
             refreshProfile: async () => {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
-                    const { data: profile } = await supabase
+                    // Try to get profile
+                    let { data: profile } = await supabase
                         .from('profiles')
                         .select('*')
                         .eq('id', user.id)
                         .single();
+
+                    // If not found, wait a bit for trigger and try once more
+                    if (!profile) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        const { data: retryProfile } = await supabase
+                            .from('profiles')
+                            .select('*')
+                            .eq('id', user.id)
+                            .single();
+                        profile = retryProfile;
+                    }
+
+                    // If still not found, create a basic one manually (fallback)
+                    if (!profile) {
+                        const { data: newProfile } = await supabase
+                            .from('profiles')
+                            .insert({
+                                id: user.id,
+                                username: user.user_metadata?.username || user.user_metadata?.full_name || user.email?.split('@')[0],
+                                full_name: user.user_metadata?.full_name || user.email?.split('@')[0],
+                                avatar_url: user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user.email}&background=random`,
+                                role: 'user',
+                                status: 'active'
+                            })
+                            .select()
+                            .single();
+                        profile = newProfile;
+                    }
+
                     if (profile) set({ profile });
                 }
             }
