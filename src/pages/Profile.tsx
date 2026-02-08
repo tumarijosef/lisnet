@@ -91,7 +91,7 @@ const Profile = () => {
         fetchFollowStats();
         fetchApplication();
         fetchArtistMusic();
-    }, [location.state, profile]);
+    }, [location.state, profile?.id]);
 
     const handlePlayTrack = (track: any) => {
         setCurrentTrack(track);

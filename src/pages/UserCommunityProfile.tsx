@@ -87,7 +87,7 @@ const UserCommunityProfile = () => {
         };
 
         fetchUserData();
-    }, [id, currentUser]);
+    }, [id, currentUser?.id]);
 
     const handleFollow = async () => {
         if (!currentUser || !id || followLoading) return;
