@@ -110,7 +110,10 @@ const LoginPage = () => {
     };
 
     const startMiniAppAuth = async () => {
+        // Switch mode immediately so the user isn't stuck on the button
+        setAuthMode('mini-app');
         setLocalLoading(true);
+
         try {
             const { data, error } = await supabase
                 .from('web_auth_sessions')
@@ -119,14 +122,12 @@ const LoginPage = () => {
                 .single();
 
             if (error) throw error;
-
-            if (data) {
-                setPendingSessionId(data.id);
-                setAuthMode('mini-app');
-            }
+            if (data) setPendingSessionId(data.id);
         } catch (err: any) {
             console.error('Session creation error:', err);
-            setLoginError('Failed to start Telegram session. Please try again.');
+            // If it fails, we go back to selection so the user can try again
+            setAuthMode('selection');
+            setLoginError('Authentication service is temporarily unavailable.');
         } finally {
             setLocalLoading(false);
         }
@@ -290,7 +291,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.3.2</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.3.3</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
