@@ -147,7 +147,8 @@ const UserCommunityProfile = () => {
                     <div className="flex justify-between items-start mb-4">
                         <div className={twMerge(
                             "w-16 h-16 rounded-full border-2 p-1 transition-all duration-500",
-                            (user.role === 'artist' || user.role === 'admin') ? "border-[#1DB954] shadow-[0_0_20px_rgba(29,185,84,0.3)]" : "border-white/10"
+                            user.role === 'admin' ? "border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.4)]" :
+                                user.role === 'artist' ? "border-[#1DB954] shadow-[0_0_20px_rgba(29,185,84,0.3)]" : "border-white/10"
                         )}>
                             <img
                                 src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=random`}

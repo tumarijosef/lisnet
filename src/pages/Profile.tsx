@@ -238,7 +238,8 @@ const Profile = () => {
                     <div className="relative group mb-4">
                         <div className={twMerge(
                             "w-28 h-28 rounded-full border-4 shadow-[0_0_50px_rgba(29,185,84,0.15)] overflow-hidden bg-[#282828] relative transition-all duration-500",
-                            (profile.role === 'artist' || profile.role === 'admin') ? "border-[#1DB954]" : "border-[#121212]",
+                            profile.role === 'admin' ? "border-[#FFD700] shadow-[0_0_30px_rgba(255,215,0,0.2)]" :
+                                profile.role === 'artist' ? "border-[#1DB954]" : "border-[#121212]",
                             updating ? 'opacity-50' : ''
                         )}>
                             {profile.avatar_url ? (

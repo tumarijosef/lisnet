@@ -310,7 +310,8 @@ const UserProfile = () => {
                 <div className="flex flex-col items-center">
                     <div className={twMerge(
                         "w-28 h-28 rounded-full border-4 shadow-2xl bg-[#282828] shrink-0 overflow-hidden mb-4 transition-all duration-500",
-                        (user.role === 'artist' || user.role === 'admin') ? "border-[#1DB954]" : "border-[#121212]"
+                        user.role === 'admin' ? "border-[#FFD700] shadow-[0_0_30px_rgba(255,215,0,0.3)]" :
+                            user.role === 'artist' ? "border-[#1DB954]" : "border-[#121212]"
                     )}>
                         {user.avatar_url ? (
                             <img src={user.avatar_url} className="w-full h-full object-cover" alt="" />
