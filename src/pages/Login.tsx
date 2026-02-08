@@ -110,17 +110,25 @@ const LoginPage = () => {
     };
 
     const startMiniAppAuth = async () => {
+        setLocalLoading(true);
         try {
-            setAuthMode('mini-app');
-            const { data } = await supabase
+            const { data, error } = await supabase
                 .from('web_auth_sessions')
                 .insert([{ status: 'pending' }])
                 .select()
                 .single();
 
-            if (data) setPendingSessionId(data.id);
-        } catch (err) {
-            setAuthMode('selection');
+            if (error) throw error;
+
+            if (data) {
+                setPendingSessionId(data.id);
+                setAuthMode('mini-app');
+            }
+        } catch (err: any) {
+            console.error('Session creation error:', err);
+            setLoginError('Failed to start Telegram session. Please try again.');
+        } finally {
+            setLocalLoading(false);
         }
     };
 
@@ -188,10 +196,17 @@ const LoginPage = () => {
                     <div className="flex flex-col gap-3 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <button
                             onClick={startMiniAppAuth}
-                            className="w-full h-14 bg-[#1DB954] text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[#1DB954]/20"
+                            disabled={localLoading}
+                            className="w-full h-14 bg-[#1DB954] text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[#1DB954]/20 disabled:opacity-50"
                         >
-                            <Smartphone size={18} />
-                            Login via Telegram App
+                            {localLoading ? (
+                                <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                            ) : (
+                                <>
+                                    <Smartphone size={18} />
+                                    Login via Telegram App
+                                </>
+                            )}
                         </button>
                     </div>
                 )}
@@ -275,7 +290,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.3.1</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.3.2</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
