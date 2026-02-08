@@ -83,15 +83,7 @@ function App() {
         initAuth();
 
         return () => subscription.unsubscribe();
-    }, [refreshProfile, setLoading, profile]);
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-black flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-[#1DB954] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-        );
-    }
+    }, [refreshProfile, setLoading]); // Removed profile from deps
 
     if (webAuthConfirmed) {
         return (
@@ -107,25 +99,25 @@ function App() {
 
                 <div className="flex flex-col gap-4 w-full max-w-xs">
                     <button
-                        onClick={() => tg?.close()}
-                        className="w-full h-16 bg-white/5 border border-white/10 text-white rounded-[20px] flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all"
-                    >
-                        <Smartphone size={18} />
-                        Return to Browser
-                    </button>
-
-                    <button
                         onClick={() => setWebAuthConfirmed(false)}
-                        className="w-full h-16 bg-[#1DB954] text-black rounded-[20px] flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-[#1DB954]/20"
+                        className="h-14 bg-white text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.05] transition-all"
                     >
-                        Continue in App
+                        Go to App
                         <ArrowRight size={18} />
                     </button>
                 </div>
 
                 <div className="mt-16 text-[10px] text-white/20 uppercase font-black tracking-[0.3em]">
-                    Secure Handshake Complete
+                    Lisnet Web v1.2.5
                 </div>
+            </div>
+        );
+    }
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="w-12 h-12 border-4 border-[#1DB954] border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
     }
