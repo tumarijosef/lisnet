@@ -21,6 +21,7 @@ import { translations } from '../lib/translations';
 import { Profile, Track } from '../types';
 import { twMerge } from 'tailwind-merge';
 import PostGrid from '../components/PostGrid';
+import { formatDistanceToNow } from 'date-fns';
 
 const UserCommunityProfile = () => {
     const { id } = useParams();
@@ -146,7 +147,7 @@ const UserCommunityProfile = () => {
                 <div className="relative bg-gradient-to-br from-white/10 to-white/[0.02] backdrop-blur-xl border border-white/10 p-5 rounded-[2rem] shadow-2xl">
                     <div className="flex justify-between items-start mb-4">
                         <div className={twMerge(
-                            "w-16 h-16 rounded-full border-2 p-1 transition-all duration-500",
+                            "w-16 h-16 rounded-full border-2 p-1 transition-all duration-500 relative",
                             user.role === 'admin' ? "border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.4)]" :
                                 user.role === 'artist' ? "border-[#1DB954] shadow-[0_0_20px_rgba(29,185,84,0.3)]" : "border-white/10"
                         )}>
@@ -155,10 +156,27 @@ const UserCommunityProfile = () => {
                                 alt={user.full_name}
                                 className="w-full h-full object-cover rounded-full"
                             />
+                            {/* Online Indicator Dot */}
+                            {user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 300000) && (
+                                <div className="absolute bottom-0.5 right-0.5 w-4 h-4 bg-[#1DB954] border-[3px] border-[#121212] rounded-full shadow-lg"></div>
+                            )}
                         </div>
-                        <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/5 flex items-center gap-2">
-                            <Library size={12} className="text-[#1DB954]" />
-                            <span className="text-[9px] font-black text-white uppercase tracking-widest">{collectionCount} Tracks</span>
+                        <div className="flex flex-col items-end gap-2">
+                            <div className="bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/5 flex items-center gap-2">
+                                <Library size={12} className="text-[#1DB954]" />
+                                <span className="text-[9px] font-black text-white uppercase tracking-widest">{collectionCount} Tracks</span>
+                            </div>
+                            {/* Online Status Text */}
+                            {user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 300000) ? (
+                                <span className="text-[8px] font-black text-[#1DB954] uppercase tracking-widest flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 bg-[#1DB954] rounded-full animate-pulse"></span>
+                                    Online
+                                </span>
+                            ) : user.last_seen ? (
+                                <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">
+                                    {formatDistanceToNow(new Date(user.last_seen))} ago
+                                </span>
+                            ) : null}
                         </div>
                     </div>
 
