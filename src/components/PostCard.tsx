@@ -142,8 +142,12 @@ const PostCard = ({ post, onLikeToggle }: PostCardProps) => {
                 )}
 
                 {post.image_url && (
-                    <div className="rounded-2xl overflow-hidden border border-white/5 shadow-inner bg-black/20">
-                        <img src={post.image_url} alt="Post" className="w-full h-auto max-h-[400px] object-cover" />
+                    <div className="rounded-2xl overflow-hidden border border-white/5 shadow-inner bg-black/20 aspect-square w-full relative">
+                        <img
+                            src={post.image_url}
+                            alt="Post"
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
                     </div>
                 )}
             </div>
