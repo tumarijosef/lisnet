@@ -119,12 +119,24 @@ const LoginPage = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#1DB954]/10 rounded-full blur-[120px] pointer-events-none" />
 
             <div className="relative z-10 flex flex-col items-center text-center max-w-sm w-full">
-                <div className="w-16 h-16 bg-gradient-to-br from-[#1DB954] to-[#1ed760] rounded-[20px] flex items-center justify-center mb-6 shadow-2xl shadow-[#1DB954]/20">
-                    <Music2 size={32} className="text-black" />
+                <div className="w-24 h-24 mb-6 animate-in zoom-in duration-700">
+                    <img
+                        src="/lisnetlogo.png"
+                        alt="Lisnet Logo"
+                        className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(29,185,84,0.3)]"
+                        onError={(e) => {
+                            // Fallback if logo is missing
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.parentElement!.innerHTML = '<div class="w-20 h-20 bg-[#1DB954] rounded-[24px] flex items-center justify-center shadow-2xl shadow-[#1DB954]/20"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg></div>';
+                        }}
+                    />
                 </div>
 
-                <h1 className="text-3xl font-black tracking-tighter mb-2 uppercase italic">LISNET</h1>
-                <p className="text-white/40 text-[10px] font-bold mb-10 tracking-widest uppercase">Digital Sound Identity</p>
+                <h1 className="text-4xl font-black tracking-tighter mb-1 uppercase">LISNET</h1>
+                <div className="flex items-center gap-1.5 mb-10 translate-y-[-2px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#1DB954] animate-pulse"></span>
+                    <span className="text-[10px] text-[#1DB954] font-black uppercase tracking-[0.3em]">ONLINE</span>
+                </div>
 
                 {authMode === 'selection' && (
                     <div className="flex flex-col gap-3 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -220,7 +232,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.0</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.1</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
