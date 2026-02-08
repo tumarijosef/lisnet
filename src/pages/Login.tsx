@@ -293,7 +293,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.5.6</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.5.7</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>

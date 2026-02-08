@@ -3,6 +3,7 @@ import { X, UserPlus, Bell, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 interface Notification {
     id: string;
@@ -72,21 +73,29 @@ const NotificationsModal = ({ isOpen, onClose }: NotificationsModalProps) => {
 
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-[3000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <div className="bg-[#181818] w-full max-w-md rounded-3xl border border-white/10 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+    return createPortal(
+        <div className="fixed inset-0 z-[2000] flex items-end justify-center sm:items-center p-0 sm:p-4 animate-in fade-in duration-200">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+
+            <div className="relative w-full max-w-md bg-[#121212] rounded-t-[32px] sm:rounded-[32px] border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+
+                {/* Drag Indicator for Mobile */}
+                <div className="w-full h-1.5 flex justify-center py-3 sm:hidden">
+                    <div className="w-12 h-1 bg-white/20 rounded-full" />
+                </div>
+
                 <div className="p-6">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-2 text-white">
                             <Bell size={20} className="text-[#1DB954]" />
-                            <h2 className="text-xl font-black uppercase tracking-tighter">Notifications</h2>
+                            <h2 className="text-lg font-black uppercase tracking-tighter">Notifications</h2>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full text-[#B3B3B3]">
-                            <X size={24} />
+                        <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full text-[#B3B3B3] transition-colors">
+                            <X size={20} />
                         </button>
                     </div>
 
-                    <div className="max-h-[60vh] overflow-y-auto no-scrollbar flex flex-col gap-2">
+                    <div className="max-h-[50vh] overflow-y-auto no-scrollbar flex flex-col gap-2 pb-8 sm:pb-4">
                         {loading ? (
                             <div className="flex justify-center py-10">
                                 <Loader2 className="animate-spin text-[#1DB954]" size={24} />
@@ -128,7 +137,8 @@ const NotificationsModal = ({ isOpen, onClose }: NotificationsModalProps) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
