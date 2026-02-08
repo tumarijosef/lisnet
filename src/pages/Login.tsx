@@ -132,11 +132,7 @@ const LoginPage = () => {
                     />
                 </div>
 
-                <h1 className="text-4xl font-black tracking-tighter mb-1 uppercase">LISNET</h1>
-                <div className="flex items-center gap-1.5 mb-10 translate-y-[-2px]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#1DB954] animate-pulse"></span>
-                    <span className="text-[10px] text-[#1DB954] font-black uppercase tracking-[0.3em]">ONLINE</span>
-                </div>
+                <h1 className="text-4xl font-black tracking-tighter mb-12 uppercase">LISNET</h1>
 
                 {authMode === 'selection' && (
                     <div className="flex flex-col gap-3 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -232,7 +228,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.1</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.2</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
