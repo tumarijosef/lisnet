@@ -25,11 +25,11 @@ import { useTelegram } from './hooks/useTelegram';
 import { useAuthStore } from './store/useAuthStore';
 import { useThemeStore } from './store/useThemeStore';
 import { useEffect } from 'react';
-import { Check, Smartphone, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight } from 'lucide-react';
 
 function App() {
     const { loading, profile, webAuthConfirmed, setWebAuthConfirmed, refreshProfile, setLoading } = useAuthStore();
-    const { tg } = useTelegram(); // Initialize Telegram WebApp and sync user
+    const { tg } = useTelegram();
     const { theme } = useThemeStore();
 
     useEffect(() => {
@@ -39,72 +39,47 @@ function App() {
     }, [theme]);
 
     useEffect(() => {
-        const isTelegram = !!(window as any).Telegram?.WebApp?.initData;
-
-        if (isTelegram && !profile) {
-            setLoading(true);
-        }
-
-        // Listen for Supabase auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log('Auth Event:', event, !!session);
-
-            if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'USER_UPDATED')) {
-                setLoading(true);
-                await refreshProfile();
-                setLoading(false);
-            } else if (event === 'SIGNED_OUT') {
-                setLoading(false);
-            }
-        });
-
-        // Check current session on mount
         const initAuth = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
                 if (session) {
                     await refreshProfile();
                 }
-            } catch (err) {
-                console.error('initAuth error:', err);
             } finally {
-                // DON'T stop loading if we are in Telegram and profile isn't ready yet
-                // The useTelegram hook will handle setLoading(false) once synced
-                if (!isTelegram) {
+                // In Telegram, we wait for useTelegram to set loading to false
+                if (!(window as any).Telegram?.WebApp?.initData) {
                     setLoading(false);
                 }
             }
         };
         initAuth();
 
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+                await refreshProfile();
+            }
+        });
+
         return () => subscription.unsubscribe();
-    }, [refreshProfile, setLoading]); // Removed profile from deps
+    }, [refreshProfile, setLoading]);
 
     if (webAuthConfirmed) {
         return (
-            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-8 text-center animate-in fade-in duration-500">
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-8 text-center">
                 <div className="w-24 h-24 bg-[#1DB954] rounded-full flex items-center justify-center mb-10 shadow-3xl shadow-[#1DB954]/20 animate-bounce-subtle">
                     <Check size={48} className="text-black stroke-[3px]" />
                 </div>
-
                 <h1 className="text-3xl font-black mb-4 uppercase tracking-tighter">Login Confirmed!</h1>
                 <p className="text-white/50 text-sm font-medium leading-relaxed mb-12">
-                    You have successfully logged in on your browser. You can now return to your computer to continue using Lisnet.
+                    Success! You are now logged in. Return to your browser or continue here.
                 </p>
-
-                <div className="flex flex-col gap-4 w-full max-w-xs">
-                    <button
-                        onClick={() => setWebAuthConfirmed(false)}
-                        className="h-14 bg-white text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.05] transition-all"
-                    >
-                        Go to App
-                        <ArrowRight size={18} />
-                    </button>
-                </div>
-
-                <div className="mt-16 text-[10px] text-white/20 uppercase font-black tracking-[0.3em]">
-                    Lisnet Web v1.3.0
-                </div>
+                <button
+                    onClick={() => setWebAuthConfirmed(false)}
+                    className="h-14 px-10 bg-white text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.05] transition-all"
+                >
+                    Continue in App
+                    <ArrowRight size={18} />
+                </button>
             </div>
         );
     }
