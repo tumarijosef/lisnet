@@ -45,6 +45,8 @@ function App() {
                 if (session) {
                     await refreshProfile();
                 }
+            } catch (err) {
+                console.error('Auth init error:', err);
             } finally {
                 // In Telegram, we wait for useTelegram to set loading to false
                 if (!(window as any).Telegram?.WebApp?.initData) {
@@ -57,6 +59,8 @@ function App() {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
             if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
                 await refreshProfile();
+            } else if (event === 'SIGNED_OUT') {
+                setLoading(false);
             }
         });
 

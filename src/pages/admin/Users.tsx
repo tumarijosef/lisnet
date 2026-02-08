@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Search, Edit2, Ban, CheckCircle, Loader2 } from "lucide-react";
+import { Search, Edit2, Ban, CheckCircle, Loader2, Trash2 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 
 interface Profile {
@@ -146,6 +146,24 @@ const Users = () => {
         }
     };
 
+    const deleteUser = async (user: Profile) => {
+        if (!window.confirm(`Are you sure you want to permanently delete user ${user.full_name}? This will only remove their LISNET profile, not their Telegram record.`)) return;
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .delete()
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            setUsers(users.filter(u => u.id !== user.id));
+        } catch (error: any) {
+            console.error('Error deleting user:', error);
+            alert(`Error deleting user: ${error.message}`);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <h2 className="text-3xl font-black tracking-tighter text-white uppercase">User Management</h2>
@@ -230,6 +248,15 @@ const Users = () => {
                                             <div className="flex justify-end gap-2">
                                                 <Button size="icon" variant="ghost" className="h-8 w-8 text-[#B3B3B3] hover:text-white hover:bg-white/10" onClick={() => handleEdit(user)}>
                                                     <Edit2 className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                    className="h-8 w-8 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                                                    onClick={() => deleteUser(user)}
+                                                    title="Delete user profile"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
                                                 </Button>
                                                 <Button
                                                     size="icon"

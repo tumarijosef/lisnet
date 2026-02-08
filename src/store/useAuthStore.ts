@@ -29,7 +29,14 @@ export const useAuthStore = create<AuthState>()(
             setWebAuthConfirmed: (confirmed) => set({ webAuthConfirmed: confirmed }),
             refreshProfile: async () => {
                 try {
-                    const { data: { user } } = await supabase.auth.getUser();
+                    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+                    if (userError || !user) {
+                        console.log('Session invalid or user deleted, clearing storage...');
+                        get().logout();
+                        return;
+                    }
+
                     if (user) {
                         // Try to get profile
                         let { data: profile } = await supabase
@@ -41,7 +48,7 @@ export const useAuthStore = create<AuthState>()(
                         // If not found, wait a bit for trigger and try once more
                         if (!profile) {
                             console.log('Profile not found, waiting for trigger...');
-                            await new Promise(resolve => setTimeout(resolve, 1500));
+                            await new Promise(resolve => setTimeout(resolve, 2000));
                             const { data: retryProfile } = await supabase
                                 .from('profiles')
                                 .select('*')
@@ -69,7 +76,6 @@ export const useAuthStore = create<AuthState>()(
 
                             if (insertError) {
                                 console.error('Fallback creation failed:', insertError);
-                                localStorage.setItem('lisnet_auth_error', JSON.stringify(insertError));
                             }
                             profile = newProfile;
                         }
