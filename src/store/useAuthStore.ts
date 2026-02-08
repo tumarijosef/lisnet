@@ -8,6 +8,8 @@ interface AuthState {
     loading: boolean;
     setLoading: (loading: boolean) => void;
     logout: () => void;
+    webAuthConfirmed: boolean;
+    setWebAuthConfirmed: (confirmed: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -21,6 +23,8 @@ export const useAuthStore = create<AuthState>()(
                 set({ profile: null });
                 localStorage.removeItem('lisnet-auth-storage');
             },
+            webAuthConfirmed: false,
+            setWebAuthConfirmed: (confirmed) => set({ webAuthConfirmed: confirmed }),
         }),
         {
             name: 'lisnet-auth-storage',

@@ -12,7 +12,7 @@ declare global {
 }
 
 export const useTelegram = () => {
-    const { profile, setProfile, setLoading } = useAuthStore();
+    const { profile, setProfile, setLoading, setWebAuthConfirmed } = useAuthStore();
     const { fetchLibrary } = useLibraryStore();
 
     useEffect(() => {
@@ -57,7 +57,7 @@ export const useTelegram = () => {
 
                         if (updateData && updateData.length > 0) {
                             tg.HapticFeedback.notificationOccurred('success');
-                            // Silent success - it just works!
+                            setWebAuthConfirmed(true); // Signal that web login was successful
                         }
                     }
 
@@ -95,7 +95,7 @@ export const useTelegram = () => {
         } else {
             setLoading(false);
         }
-    }, [setProfile, setLoading, fetchLibrary]);
+    }, [setProfile, setLoading, fetchLibrary, setWebAuthConfirmed]);
 
     return {
         tg: window.Telegram?.WebApp,

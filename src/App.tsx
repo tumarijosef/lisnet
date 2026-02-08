@@ -24,10 +24,11 @@ import { useTelegram } from './hooks/useTelegram';
 import { useAuthStore } from './store/useAuthStore';
 import { useThemeStore } from './store/useThemeStore';
 import { useEffect } from 'react';
+import { Check, Smartphone, ArrowRight } from 'lucide-react';
 
 function App() {
-    const { loading, profile } = useAuthStore();
-    useTelegram(); // Initialize Telegram WebApp and sync user
+    const { loading, profile, webAuthConfirmed, setWebAuthConfirmed } = useAuthStore();
+    const { tg } = useTelegram(); // Initialize Telegram WebApp and sync user
     const { theme } = useThemeStore();
 
     useEffect(() => {
@@ -40,6 +41,43 @@ function App() {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center">
                 <div className="w-12 h-12 border-4 border-[#1DB954] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (webAuthConfirmed) {
+        return (
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-8 text-center animate-in fade-in duration-500">
+                <div className="w-24 h-24 bg-[#1DB954] rounded-full flex items-center justify-center mb-10 shadow-3xl shadow-[#1DB954]/20 animate-bounce-subtle">
+                    <Check size={48} className="text-black stroke-[3px]" />
+                </div>
+
+                <h1 className="text-3xl font-black mb-4 uppercase tracking-tighter">Login Confirmed!</h1>
+                <p className="text-white/50 text-sm font-medium leading-relaxed mb-12">
+                    You have successfully logged in on your browser. You can now return to your computer to continue using Lisnet.
+                </p>
+
+                <div className="flex flex-col gap-4 w-full max-w-xs">
+                    <button
+                        onClick={() => tg?.close()}
+                        className="w-full h-16 bg-white/5 border border-white/10 text-white rounded-[20px] flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest hover:bg-white/10 transition-all"
+                    >
+                        <Smartphone size={18} />
+                        Return to Browser
+                    </button>
+
+                    <button
+                        onClick={() => setWebAuthConfirmed(false)}
+                        className="w-full h-16 bg-[#1DB954] text-black rounded-[20px] flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-[#1DB954]/20"
+                    >
+                        Continue in App
+                        <ArrowRight size={18} />
+                    </button>
+                </div>
+
+                <div className="mt-16 text-[10px] text-white/20 uppercase font-black tracking-[0.3em]">
+                    Secure Handshake Complete
+                </div>
             </div>
         );
     }
