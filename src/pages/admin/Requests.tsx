@@ -140,11 +140,21 @@ const Requests = () => {
                             </CardHeader>
 
                             <CardContent className="space-y-4">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-[#B3B3B3]">Requested Status</p>
-                                    <span className={app.type === 'artist' ? "text-[#1DB954] text-xs font-bold" : "text-blue-500 text-xs font-bold"}>
-                                        {app.type.toUpperCase()}
-                                    </span>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-[#B3B3B3]">Requested Status</p>
+                                        <span className={app.type === 'artist' ? "text-[#1DB954] text-xs font-bold" : "text-blue-500 text-xs font-bold"}>
+                                            {app.type.toUpperCase()}
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-[#B3B3B3]">Request Date</p>
+                                        <div className="text-[10px] text-white/60 font-mono leading-tight">
+                                            {new Date(app.created_at).toLocaleDateString()}<br />
+                                            {new Date(app.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="flex gap-2">
