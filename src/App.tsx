@@ -41,12 +41,7 @@ function App() {
     useEffect(() => {
         const isTelegram = !!(window as any).Telegram?.WebApp?.initData;
 
-        // Handle OAuth hash tokens explicitly if present
-        const hasHashToken = window.location.hash.includes('access_token=') ||
-            window.location.hash.includes('id_token=') ||
-            window.location.hash.includes('refresh_token=');
-
-        if (hasHashToken || (isTelegram && !profile)) {
+        if (isTelegram && !profile) {
             setLoading(true);
         }
 
@@ -75,7 +70,7 @@ function App() {
             } finally {
                 // DON'T stop loading if we are in Telegram and profile isn't ready yet
                 // The useTelegram hook will handle setLoading(false) once synced
-                if (!isTelegram && !hasHashToken) {
+                if (!isTelegram) {
                     setLoading(false);
                 }
             }
@@ -108,7 +103,7 @@ function App() {
                 </div>
 
                 <div className="mt-16 text-[10px] text-white/20 uppercase font-black tracking-[0.3em]">
-                    Lisnet Web v1.2.5
+                    Lisnet Web v1.3.0
                 </div>
             </div>
         );
