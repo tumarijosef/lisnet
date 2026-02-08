@@ -10,6 +10,7 @@ import { twMerge } from 'tailwind-merge';
 import { Profile, Track } from '../types';
 import UserListModal from '../components/UserListModal';
 import PostGrid from '../components/PostGrid';
+import { formatDistanceToNow } from 'date-fns';
 
 const UserProfile = () => {
     const { id } = useParams();
@@ -309,7 +310,7 @@ const UserProfile = () => {
 
                 <div className="flex flex-col items-center">
                     <div className={twMerge(
-                        "w-28 h-28 rounded-full border-4 shadow-2xl bg-[#282828] shrink-0 overflow-hidden mb-4 transition-all duration-500",
+                        "w-28 h-28 rounded-full border-4 shadow-2xl bg-[#282828] shrink-0 overflow-hidden mb-4 transition-all duration-500 relative",
                         user.role === 'admin' ? "border-[#FFD700] shadow-[0_0_30px_rgba(255,215,0,0.3)]" :
                             user.role === 'artist' ? "border-[#1DB954]" : "border-[#121212]"
                     )}>
@@ -320,10 +321,29 @@ const UserProfile = () => {
                                 {getUserInitials(user.full_name || user.username)}
                             </div>
                         )}
+
+                        {/* Online Indicator Dot */}
+                        {user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 300000) && (
+                            <div className="absolute bottom-1 right-1 w-5 h-5 bg-[#1DB954] border-4 border-[#121212] rounded-full shadow-lg"></div>
+                        )}
                     </div>
 
                     <div className="text-center mb-6">
                         <div className="flex flex-col items-center gap-1 px-4">
+                            {/* Online Status Text */}
+                            <div className="mb-2">
+                                {user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 300000) ? (
+                                    <span className="text-[9px] font-black text-[#1DB954] uppercase tracking-[0.2em] flex items-center gap-1.5 justify-center">
+                                        <span className="w-1.5 h-1.5 bg-[#1DB954] rounded-full animate-pulse"></span>
+                                        Online Now
+                                    </span>
+                                ) : user.last_seen ? (
+                                    <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">
+                                        Last seen {formatDistanceToNow(new Date(user.last_seen))} ago
+                                    </span>
+                                ) : null}
+                            </div>
+
                             <div className="flex items-center gap-2">
                                 <h1 className="text-2xl font-black uppercase tracking-tighter leading-tight break-words">
                                     {user.full_name || user.username}

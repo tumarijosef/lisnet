@@ -41,4 +41,5 @@ export interface Profile {
     role: 'admin' | 'user' | 'artist';
     artist_type?: 'none' | 'artist' | 'label';
     created_at: string;
+    last_seen?: string;
 }

@@ -67,6 +67,29 @@ function App() {
         return () => subscription.unsubscribe();
     }, [refreshProfile, setLoading]);
 
+    // Update last_seen heartbeat
+    useEffect(() => {
+        if (!profile?.id) return;
+
+        const updateLastSeen = async () => {
+            try {
+                await supabase
+                    .from('profiles')
+                    .update({ last_seen: new Date().toISOString() })
+                    .eq('id', profile.id);
+            } catch (err) {
+                console.error('Error updating last seen:', err);
+            }
+        };
+
+        // Update once on mount
+        updateLastSeen();
+
+        // Then every 2 minutes
+        const interval = setInterval(updateLastSeen, 120000);
+        return () => clearInterval(interval);
+    }, [profile?.id]);
+
     if (webAuthConfirmed) {
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-8 text-center">

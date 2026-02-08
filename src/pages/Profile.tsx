@@ -254,6 +254,9 @@ const Profile = () => {
                                 </div>
                             )}
 
+                            {/* Online Indicator Dot (Always online for yourself) */}
+                            <div className="absolute bottom-1 right-1 w-5 h-5 bg-[#1DB954] border-4 border-[#121212] rounded-full shadow-lg"></div>
+
                             <div
                                 className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                 onClick={() => fileInputRef.current?.click()}
@@ -282,6 +285,13 @@ const Profile = () => {
                     </div>
 
                     <div className="flex flex-col items-center w-full max-w-[280px]">
+                        {/* Online Status Text */}
+                        <div className="mb-2">
+                            <span className="text-[9px] font-black text-[#1DB954] uppercase tracking-[0.2em] flex items-center gap-1.5 justify-center">
+                                <span className="w-1.5 h-1.5 bg-[#1DB954] rounded-full animate-pulse"></span>
+                                Online Now
+                            </span>
+                        </div>
                         {isEditing ? (
                             <div className="flex flex-col gap-2 mt-2 w-full">
                                 <Input
