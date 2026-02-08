@@ -149,13 +149,18 @@ const Users = () => {
     };
 
     const deleteUser = async (user: Profile) => {
+        if (!profile?.telegram_id) {
+            alert("Administrative error: Your profile is not fully loaded. Please refresh the page.");
+            return;
+        }
+
         if (!window.confirm(`Are you sure you want to permanently delete user ${user.full_name}? This action cannot be undone.`)) return;
 
         try {
             // Use RPC and pass the current logged-in admin's Telegram ID for verification
             const { error } = await supabase.rpc('delete_user_by_admin', {
                 target_user_id: user.id,
-                admin_tg_id: profile?.telegram_id || 0
+                admin_tg_id: profile.telegram_id
             });
 
             if (error) throw error;
@@ -164,7 +169,7 @@ const Users = () => {
             setUsers(prev => prev.filter(u => u.id !== user.id));
         } catch (error: any) {
             console.error('Error deleting user:', error);
-            alert(`Error deleting user: ${error.message || 'Check database permissions'}`);
+            alert(`Error: ${error.message || 'Check database permissions'}`);
         }
     };
 
