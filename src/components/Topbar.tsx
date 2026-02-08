@@ -56,26 +56,33 @@ const Topbar = () => {
             <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
             <NotificationsModal isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} />
 
-            {/* Left Section: Status (Reverted to Screenshot Style) */}
-            <div className="flex-1 flex items-center gap-4">
+            {/* Left Section: Status & Personal Avatar */}
+            <div className="flex-1 flex items-center gap-6">
                 <div
                     onClick={() => navigate('/feed')}
-                    className="flex items-center gap-3 cursor-pointer group"
+                    className="flex flex-col cursor-pointer group active:scale-95 transition-all"
                 >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1DB954] to-[#191414] p-0.5 border border-white/10 group-active:scale-95 transition-transform">
-                        {profile?.avatar_url ? (
-                            <img src={profile.avatar_url} className="w-full h-full object-cover rounded-full" alt="" />
-                        ) : (
-                            <div className="w-full h-full bg-black rounded-full flex items-center justify-center text-[10px] font-black">{profile?.username?.substring(0, 2).toUpperCase()}</div>
-                        )}
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-[11px] font-black text-white uppercase tracking-tight leading-none">LISNET</span>
-                        <span className="text-[8px] text-[#1DB954] font-black uppercase tracking-widest flex items-center gap-1 mt-0.5">
-                            <span className="w-1 h-1 rounded-full bg-[#1DB954] animate-pulse"></span>
-                            ONLINE
-                        </span>
-                    </div>
+                    <span className="text-[11px] font-black text-white uppercase tracking-tight leading-none group-hover:text-[#1DB954] transition-colors">LISNET</span>
+                    <span className="text-[8px] text-[#1DB954] font-black uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                        <span className="w-1 h-1 rounded-full bg-[#1DB954] animate-pulse"></span>
+                        ONLINE
+                    </span>
+                </div>
+
+                {/* Personal Avatar - Clickable to Profile */}
+                <div
+                    onClick={() => navigate('/profile')}
+                    className={twMerge(
+                        "w-8 h-8 rounded-full border-2 overflow-hidden cursor-pointer hover:border-white transition-all active:scale-90 shadow-2xl",
+                        profile?.role === 'admin' ? "border-[#FFD700]" :
+                            profile?.role === 'artist' ? "border-[#1DB954]" : "border-white/10"
+                    )}
+                >
+                    <img
+                        src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}&background=random`}
+                        className="w-full h-full object-cover"
+                        alt=""
+                    />
                 </div>
             </div>
 
@@ -97,7 +104,7 @@ const Topbar = () => {
                 ))}
             </nav>
 
-            {/* Right Section: Actions & Profile */}
+            {/* Right Section: Actions & Profile Icon */}
             <div className="flex-1 flex items-center justify-end gap-3 md:gap-5">
                 <div className="flex items-center gap-3 border-r border-white/5 pr-5">
                     <button
@@ -124,23 +131,15 @@ const Topbar = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div
+                    <button
                         onClick={() => navigate('/profile')}
-                        className="flex items-center gap-2 bg-white/5 hover:bg-white/10 p-1 pr-3 rounded-full cursor-pointer transition-all active:scale-95 border border-white/5"
+                        className="p-2 rounded-full bg-white/5 text-[#B3B3B3] hover:text-white hover:bg-white/10 transition-all active:scale-95 border border-white/5"
+                        title="Profile"
                     >
-                        <div className={twMerge(
-                            "w-7 h-7 rounded-full border-2 overflow-hidden",
-                            profile?.role === 'admin' ? "border-[#FFD700]" :
-                                profile?.role === 'artist' ? "border-[#1DB954]" : "border-white/10"
-                        )}>
-                            <img src={profile?.avatar_url || `https://ui-avatars.com/api/?name=${profile?.username}&background=random`} className="w-full h-full object-cover" alt="" />
-                        </div>
-                        <p className="hidden xxl:block text-[9px] font-black text-white uppercase tracking-tighter truncate max-w-[80px]">
-                            {profile?.username}
-                        </p>
-                    </div>
+                        <User size={18} />
+                    </button>
 
-                    <button onClick={logout} className="p-2 rounded-full text-white/10 hover:text-red-500 transition-all">
+                    <button onClick={logout} className="p-2 rounded-full text-white/10 hover:text-red-500 transition-all active:scale-95">
                         <LogOut size={16} />
                     </button>
                 </div>
