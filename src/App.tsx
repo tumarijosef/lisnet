@@ -39,20 +39,22 @@ function App() {
     }, [theme]);
 
     useEffect(() => {
+        const isTelegram = !!(window as any).Telegram?.WebApp?.initData;
+
         // Handle OAuth hash tokens explicitly if present
         const hasHashToken = window.location.hash.includes('access_token=') ||
             window.location.hash.includes('id_token=') ||
             window.location.hash.includes('refresh_token=');
 
-        if (hasHashToken) {
+        if (hasHashToken || (isTelegram && !profile)) {
             setLoading(true);
         }
 
         // Listen for Supabase auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log('Auth Event:', event); // Debug log
+            console.log('Auth Event:', event, !!session);
 
-            if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+            if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'USER_UPDATED')) {
                 setLoading(true);
                 await refreshProfile();
                 setLoading(false);
@@ -68,9 +70,12 @@ function App() {
                 if (session) {
                     await refreshProfile();
                 }
+            } catch (err) {
+                console.error('initAuth error:', err);
             } finally {
-                // Only stop loading if we DON'T have a hash token we're still processing
-                if (!hasHashToken) {
+                // DON'T stop loading if we are in Telegram and profile isn't ready yet
+                // The useTelegram hook will handle setLoading(false) once synced
+                if (!isTelegram && !hasHashToken) {
                     setLoading(false);
                 }
             }
@@ -78,7 +83,7 @@ function App() {
         initAuth();
 
         return () => subscription.unsubscribe();
-    }, [refreshProfile, setLoading]);
+    }, [refreshProfile, setLoading, profile]);
 
     if (loading) {
         return (
