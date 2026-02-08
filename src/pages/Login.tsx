@@ -208,104 +208,18 @@ const LoginPage = () => {
                             Login via Telegram App
                         </button>
 
-                        <div className="grid grid-cols-2 gap-3">
-                            <button
-                                onClick={handleGoogleAuth}
-                                className="h-14 bg-white text-black rounded-2xl flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all"
-                            >
-                                <svg className="w-4 h-4" viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
-                                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                                </svg>
-                                Google
-                            </button>
-                            <button
-                                onClick={() => setAuthMode('email')}
-                                className="h-14 bg-white/5 border border-white/10 text-white rounded-2xl flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-wider hover:bg-white/10 transition-all"
-                            >
-                                <MessageCircle size={18} />
-                                Email
-                            </button>
-                        </div>
-
                         <button
-                            onClick={loadWidget}
-                            className="w-full h-12 text-white/20 hover:text-white/40 font-black text-[9px] uppercase tracking-[0.3em] transition-colors mt-2"
+                            onClick={handleGoogleAuth}
+                            className="w-full h-14 bg-white text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all"
                         >
-                            Telegram Phone Login
+                            <svg className="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+                                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                            </svg>
+                            Login with Google
                         </button>
-                    </div>
-                )}
-
-                {authMode === 'email' && (
-                    <div className="w-full space-y-6 animate-in fade-in zoom-in duration-300">
-                        <div className="text-center space-y-2">
-                            <h2 className="text-xl font-black uppercase tracking-wider">{isSignUp ? 'Create Account' : 'Welcome Back'}</h2>
-                            <p className="text-white/40 text-[9px] uppercase font-bold tracking-[0.2em]">
-                                {isSignUp ? 'Join the Lisnet production network' : 'Login with your production email'}
-                            </p>
-                        </div>
-
-                        <form onSubmit={handleEmailAuth} className="space-y-3">
-                            <div className="space-y-1">
-                                <input
-                                    type="email"
-                                    placeholder="EMAIL ADDRESS"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-6 text-xs font-bold focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954] transition-all outline-none"
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-1">
-                                <input
-                                    type="password"
-                                    placeholder="PASSWORD"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-6 text-xs font-bold focus:border-[#1DB954] focus:ring-1 focus:ring-[#1DB954] transition-all outline-none"
-                                    required
-                                />
-                            </div>
-
-                            {loginError && (
-                                <p className="text-[#FF0000] text-[8px] uppercase font-bold tracking-widest text-center animate-shake">
-                                    {loginError}
-                                </p>
-                            )}
-
-                            <button
-                                type="submit"
-                                disabled={localLoading}
-                                className="w-full h-14 bg-[#1DB954] text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-[#1DB954]/20 disabled:opacity-50"
-                            >
-                                {localLoading ? (
-                                    <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                                ) : (
-                                    isSignUp ? 'Sign Up' : 'Login'
-                                )}
-                            </button>
-                        </form>
-
-                        <div className="flex flex-col items-center gap-4">
-                            <button
-                                onClick={() => setIsSignUp(!isSignUp)}
-                                className="text-[9px] text-white/40 font-black uppercase tracking-widest hover:text-white transition-colors"
-                            >
-                                {isSignUp ? 'Already have an account? Login' : 'New to Lisnet? Create Account'}
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setAuthMode('selection');
-                                    setLoginError(null);
-                                }}
-                                className="text-[9px] text-[#1DB954] font-black uppercase tracking-[0.3em] hover:brightness-110"
-                            >
-                                ← Back to options
-                            </button>
-                        </div>
                     </div>
                 )}
 
@@ -384,7 +298,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.7</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.8</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
