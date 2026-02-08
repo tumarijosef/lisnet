@@ -145,7 +145,10 @@ const UserCommunityProfile = () => {
 
                 <div className="relative bg-gradient-to-br from-white/10 to-white/[0.02] backdrop-blur-xl border border-white/10 p-5 rounded-[2rem] shadow-2xl">
                     <div className="flex justify-between items-start mb-4">
-                        <div className="w-16 h-16 rounded-full border-2 border-[#1DB954] p-1 shadow-[0_0_20px_rgba(29,185,84,0.2)]">
+                        <div className={twMerge(
+                            "w-16 h-16 rounded-full border-2 p-1 transition-all duration-500",
+                            (user.role === 'artist' || user.role === 'admin') ? "border-[#1DB954] shadow-[0_0_20px_rgba(29,185,84,0.3)]" : "border-white/10"
+                        )}>
                             <img
                                 src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
                                 alt={user.full_name}
@@ -168,7 +171,9 @@ const UserCommunityProfile = () => {
                         <div className="flex items-center gap-2">
                             <p className="text-xs font-bold text-[#1DB954]">@{user.username}</p>
                             <span className="w-1 h-1 rounded-full bg-white/20"></span>
-                            <p className="text-[9px] text-white/40 uppercase font-black tracking-tighter">Community Member</p>
+                            <p className="text-[9px] text-white/40 uppercase font-black tracking-tighter">
+                                {user.role === 'admin' ? 'System Administrator' : user.role === 'artist' ? 'Verified Artist' : 'Community Member'}
+                            </p>
                         </div>
                     </div>
 

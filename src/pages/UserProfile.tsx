@@ -308,7 +308,10 @@ const UserProfile = () => {
                 </button>
 
                 <div className="flex flex-col items-center">
-                    <div className="w-28 h-28 rounded-full border-4 border-[#121212] shadow-2xl bg-[#282828] shrink-0 overflow-hidden mb-4">
+                    <div className={twMerge(
+                        "w-28 h-28 rounded-full border-4 shadow-2xl bg-[#282828] shrink-0 overflow-hidden mb-4 transition-all duration-500",
+                        (user.role === 'artist' || user.role === 'admin') ? "border-[#1DB954]" : "border-[#121212]"
+                    )}>
                         {user.avatar_url ? (
                             <img src={user.avatar_url} className="w-full h-full object-cover" alt="" />
                         ) : (
@@ -319,9 +322,21 @@ const UserProfile = () => {
                     </div>
 
                     <div className="text-center mb-6">
-                        <h1 className="text-2xl font-black uppercase tracking-tighter leading-tight break-words px-4">
-                            {user.full_name || user.username}
-                        </h1>
+                        <div className="flex flex-col items-center gap-1 px-4">
+                            <div className="flex items-center gap-2">
+                                <h1 className="text-2xl font-black uppercase tracking-tighter leading-tight break-words">
+                                    {user.full_name || user.username}
+                                </h1>
+                                {user.role === 'artist' && (
+                                    <span className="bg-[#1DB954] text-black text-[8px] font-black px-1.5 py-0.5 rounded-sm uppercase tracking-tighter">Artist</span>
+                                )}
+                                {user.role === 'admin' && (
+                                    <span className="bg-white text-black text-[8px] font-black px-1.5 py-0.5 rounded-sm uppercase tracking-tighter flex items-center gap-1">
+                                        <ShieldCheck size={8} /> Admin
+                                    </span>
+                                )}
+                            </div>
+                        </div>
                         <p className="text-[10px] font-mono text-[#B3B3B3] mt-2 bg-white/5 py-1 px-3 rounded-full inline-block uppercase tracking-widest">
                             {user.username}
                         </p>

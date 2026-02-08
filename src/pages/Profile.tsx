@@ -236,7 +236,11 @@ const Profile = () => {
 
                 <div className="flex flex-col items-center">
                     <div className="relative group mb-4">
-                        <div className={`w-28 h-28 rounded-full border-4 border-[#121212] shadow-[0_0_50px_rgba(29,185,84,0.15)] overflow-hidden bg-[#282828] relative ${updating ? 'opacity-50' : ''}`}>
+                        <div className={twMerge(
+                            "w-28 h-28 rounded-full border-4 shadow-[0_0_50px_rgba(29,185,84,0.15)] overflow-hidden bg-[#282828] relative transition-all duration-500",
+                            (profile.role === 'artist' || profile.role === 'admin') ? "border-[#1DB954]" : "border-[#121212]",
+                            updating ? 'opacity-50' : ''
+                        )}>
                             {profile.avatar_url ? (
                                 <img
                                     src={profile.avatar_url}
@@ -305,14 +309,24 @@ const Profile = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="relative inline-flex items-center justify-center group mb-2">
-                                <h2 className="text-2xl font-black tracking-tight">{profile.full_name}</h2>
-                                <button
-                                    onClick={() => { setIsEditing(true); setNewName(profile.full_name); }}
-                                    className="absolute -right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/5 rounded-full"
-                                >
-                                    <Edit3 size={14} className="text-[#1DB954]" />
-                                </button>
+                            <div className="relative flex flex-col items-center group mb-2">
+                                <div className="flex items-center gap-2">
+                                    <h2 className="text-2xl font-black tracking-tight">{profile.full_name}</h2>
+                                    {profile.role === 'artist' && (
+                                        <span className="bg-[#1DB954] text-black text-[8px] font-black px-1.5 py-0.5 rounded-sm uppercase tracking-tighter">Artist</span>
+                                    )}
+                                    {profile.role === 'admin' && (
+                                        <span className="bg-white text-black text-[8px] font-black px-1.5 py-0.5 rounded-sm uppercase tracking-tighter flex items-center gap-1">
+                                            <ShieldCheck size={8} /> Admin
+                                        </span>
+                                    )}
+                                    <button
+                                        onClick={() => { setIsEditing(true); setNewName(profile.full_name); }}
+                                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-white/5 rounded-full"
+                                    >
+                                        <Edit3 size={14} className="text-[#1DB954]" />
+                                    </button>
+                                </div>
                             </div>
                         )}
                         <p className="text-xs font-mono text-[#B3B3B3] bg-white/5 py-1 px-3 rounded-full">
