@@ -24,7 +24,7 @@ const Profile = () => {
     const [collectionsSubTab, setCollectionsSubTab] = useState<'main' | 'collection' | 'likes' | 'playlists'>('main');
     const location = useLocation();
     const navigate = useNavigate();
-    const { profile, setProfile, loading: authLoading, refreshProfile } = useAuthStore();
+    const { profile, setProfile, loading: authLoading } = useAuthStore();
     const { tracks } = useTracks();
     const { language } = useLanguageStore();
     const t = translations[language].profile;
@@ -44,9 +44,6 @@ const Profile = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        // Force refresh profile on mount to ensure role sync
-        refreshProfile();
-
         if (location.state?.activeTab) {
             setActiveTab(location.state.activeTab);
         }

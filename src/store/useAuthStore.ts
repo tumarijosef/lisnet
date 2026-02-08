@@ -32,8 +32,7 @@ export const useAuthStore = create<AuthState>()(
                     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
                     if (userError || !user) {
-                        console.log('Session invalid or user deleted, clearing storage...');
-                        get().logout();
+                        console.log('Refresh: No active session found or error occurred');
                         return;
                     }
 
