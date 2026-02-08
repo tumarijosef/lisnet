@@ -71,22 +71,28 @@ function App() {
     useEffect(() => {
         if (!profile?.id) return;
 
-        const updateLastSeen = async () => {
+        const updatePresence = async () => {
             try {
-                await supabase
-                    .from('profiles')
-                    .update({ last_seen: new Date().toISOString() })
-                    .eq('id', profile.id);
+                // 1. Update Database via RPC (Mandatory for reliability)
+                const { error } = await supabase.rpc('handle_heartbeat', { user_id: profile.id });
+
+                // 2. Update Local Store immediately for smooth UI
+                const now = new Date().toISOString();
+                useAuthStore.setState(state => ({
+                    profile: state.profile ? { ...state.profile, last_seen: now } : null
+                }));
+
+                if (error) console.warn('Presence sync warning:', error);
             } catch (err) {
-                console.error('Error updating last seen:', err);
+                console.error('Presence error:', err);
             }
         };
 
         // Update once on mount
-        updateLastSeen();
+        updatePresence();
 
-        // Then every 2 minutes
-        const interval = setInterval(updateLastSeen, 120000);
+        // High frequency during active session (30s)
+        const interval = setInterval(updatePresence, 30000);
         return () => clearInterval(interval);
     }, [profile?.id]);
 

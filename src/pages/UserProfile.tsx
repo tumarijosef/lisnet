@@ -323,7 +323,7 @@ const UserProfile = () => {
                         )}
 
                         {/* Online Indicator Dot */}
-                        {user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 300000) && (
+                        {(user.id === currentUser?.id || user.username === currentUser?.username || (user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 180000))) && (
                             <div className="absolute bottom-1 right-1 w-5 h-5 bg-[#1DB954] border-4 border-[#121212] rounded-full shadow-lg"></div>
                         )}
                     </div>
@@ -332,7 +332,7 @@ const UserProfile = () => {
                         <div className="flex flex-col items-center gap-1 px-4">
                             {/* Online Status Text */}
                             <div className="mb-2">
-                                {user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 300000) ? (
+                                {(user.id === currentUser?.id || user.username === currentUser?.username || (user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 180000))) ? (
                                     <span className="text-[9px] font-black text-[#1DB954] uppercase tracking-[0.2em] flex items-center gap-1.5 justify-center">
                                         <span className="w-1.5 h-1.5 bg-[#1DB954] rounded-full animate-pulse"></span>
                                         Online Now

@@ -157,7 +157,7 @@ const UserCommunityProfile = () => {
                                 className="w-full h-full object-cover rounded-full"
                             />
                             {/* Online Indicator Dot */}
-                            {user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 300000) && (
+                            {(user.id === currentUser?.id || user.username === currentUser?.username || (user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 180000))) && (
                                 <div className="absolute bottom-0.5 right-0.5 w-4 h-4 bg-[#1DB954] border-[3px] border-[#121212] rounded-full shadow-lg"></div>
                             )}
                         </div>
@@ -167,7 +167,7 @@ const UserCommunityProfile = () => {
                                 <span className="text-[9px] font-black text-white uppercase tracking-widest">{collectionCount} Tracks</span>
                             </div>
                             {/* Online Status Text */}
-                            {user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 300000) ? (
+                            {(user.id === currentUser?.id || user.username === currentUser?.username || (user.last_seen && (new Date().getTime() - new Date(user.last_seen).getTime() < 180000))) ? (
                                 <span className="text-[8px] font-black text-[#1DB954] uppercase tracking-widest flex items-center gap-1.5">
                                     <span className="w-1.5 h-1.5 bg-[#1DB954] rounded-full animate-pulse"></span>
                                     Online
