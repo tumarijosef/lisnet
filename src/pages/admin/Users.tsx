@@ -5,6 +5,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Search, Edit2, Ban, CheckCircle, Loader2, Trash2 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
+import { useAuthStore } from "../../store/useAuthStore";
 
 interface Profile {
     id: string;
@@ -19,6 +20,7 @@ interface Profile {
 }
 
 const Users = () => {
+    const { profile } = useAuthStore();
     const [users, setUsers] = useState<Profile[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -147,12 +149,13 @@ const Users = () => {
     };
 
     const deleteUser = async (user: Profile) => {
-        if (!window.confirm(`Are you sure you want to permanently delete user ${user.full_name}? This will only remove their LISNET profile, not their Telegram record.`)) return;
+        if (!window.confirm(`Are you sure you want to permanently delete user ${user.full_name}? This action cannot be undone.`)) return;
 
         try {
-            // Use RPC to bypass RLS and handle cleanup of dependent data
+            // Use RPC and pass the current logged-in admin's Telegram ID for verification
             const { error } = await supabase.rpc('delete_user_by_admin', {
-                target_user_id: user.id
+                target_user_id: user.id,
+                admin_tg_id: profile?.telegram_id || 0
             });
 
             if (error) throw error;
