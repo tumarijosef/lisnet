@@ -88,8 +88,8 @@ const Feed = () => {
             <SettingsModal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} />
             <NotificationsModal isOpen={isNotificationsModalOpen} onClose={() => setIsNotificationsModalOpen(false)} />
 
-            {/* Header */}
-            <header className="flex justify-between items-center mb-2 px-1">
+            {/* Header - Mobile Only */}
+            <header className="flex md:hidden justify-between items-center mb-2 px-1">
                 <div className="flex items-center gap-3">
                     <div
                         className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1DB954] to-[#191414] flex items-center justify-center text-xs font-bold text-white overflow-hidden border border-white/10 cursor-pointer shadow-lg active:scale-95 transition-transform"
