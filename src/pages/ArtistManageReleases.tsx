@@ -154,7 +154,7 @@ const ArtistManageReleases = () => {
         setExpandedReleaseId(expandedReleaseId === id ? null : id);
     };
 
-    if (!profile || profile.role !== 'artist') {
+    if (!profile || (profile.role !== 'artist' && profile.role !== 'admin')) {
         return (
             <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4">
                 <p className="text-[#B3B3B3] mb-4">You do not have permission to access this page.</p>
@@ -173,7 +173,7 @@ const ArtistManageReleases = () => {
                     </button>
                     <div>
                         <h1 className="text-xl font-black text-white uppercase tracking-tight">Manage Music</h1>
-                        <p className="text-[10px] text-[#1DB954] font-mono uppercase tracking-[0.2em]">{profile.artist_type} Dashboard</p>
+                        <p className="text-[10px] text-[#1DB954] font-mono uppercase tracking-[0.2em]">{profile.artist_type || profile.role} Dashboard</p>
                     </div>
                 </div>
                 <Button onClick={() => { setEditingRelease(null); setIsModalOpen(true); }} className="bg-[#1DB954] text-black hover:bg-[#1ed760] font-black text-[10px] uppercase tracking-widest px-4 h-9 rounded-full">

@@ -65,7 +65,7 @@ const Profile = () => {
         };
 
         const fetchApplication = async () => {
-            if (!profile || profile.role === 'artist') return;
+            if (!profile || profile.role === 'artist' || profile.role === 'admin') return;
             const { data } = await supabase
                 .from('artist_applications')
                 .select('status')
@@ -78,7 +78,7 @@ const Profile = () => {
         };
 
         const fetchArtistMusic = async () => {
-            if (!profile || profile.role !== 'artist') return;
+            if (!profile || (profile.role !== 'artist' && profile.role !== 'admin')) return;
             const { data } = await supabase
                 .from('releases')
                 .select('*')
@@ -385,8 +385,8 @@ const Profile = () => {
                         </div>
                     )}
 
-                    {/* ARTIST MINI-ADMIN TOOLS */}
-                    {profile.role === 'artist' && (
+                    {/* ARTIST Hub tools (Also for Admins) */}
+                    {(profile.role === 'artist' || profile.role === 'admin') && (
                         <div className="mt-8 w-full px-4">
                             <div className="bg-gradient-to-br from-[#1DB954]/20 to-transparent border border-[#1DB954]/20 rounded-3xl p-6">
                                 <div className="flex items-center justify-between mb-4">
@@ -423,7 +423,7 @@ const Profile = () => {
             <div className="flex border-b border-white/10 px-4 mt-4 sticky top-0 bg-[#121212]/80 backdrop-blur-lg z-10">
                 {[
                     { id: 'posts', icon: MessageSquare, label: 'Posts' },
-                    { id: 'music', icon: Disc, label: 'Music', show: profile.role === 'artist' },
+                    { id: 'music', icon: Disc, label: 'Music', show: profile.role === 'artist' || profile.role === 'admin' },
                     { id: 'collections', icon: Grid, label: 'Collections', show: true }
                 ].filter(t => (t as any).show !== false).map((tab) => (
                     <button

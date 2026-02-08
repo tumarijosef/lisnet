@@ -404,7 +404,7 @@ const UserProfile = () => {
             <div className="flex border-b border-white/5 sticky top-0 bg-[#121212]/90 backdrop-blur-md z-20">
                 {[
                     { id: 'posts', icon: MessageSquare, label: 'Posts' },
-                    { id: 'music', icon: Disc, label: 'Music', show: user.role === 'artist' },
+                    { id: 'music', icon: Disc, label: 'Music', show: user.role === 'artist' || user.role === 'admin' },
                     { id: 'collections', icon: Grid, label: 'Collections', show: true }
                 ].filter(t => (t as any).show !== false).map((tab) => (
                     <button
