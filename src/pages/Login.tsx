@@ -133,11 +133,11 @@ const LoginPage = () => {
 
                         {/* LisNet Text */}
                         <div className="relative flex items-center font-sans tracking-tight">
-                            <span className="text-5xl font-black text-[#FF0000] relative">
+                            <span className="text-5xl font-black text-[#1DB954] relative">
                                 L
                                 <span className="relative">
                                     i
-                                    <span className="absolute -top-1 left-1.5 w-2 h-2 bg-[#FF0000] rounded-full shadow-[0_0_10px_#FF0000]" />
+                                    <span className="absolute -top-1 left-1.5 w-2 h-2 bg-[#1DB954] rounded-full shadow-[0_0_10px_#1DB954]" />
                                 </span>
                                 s
                             </span>
@@ -152,7 +152,7 @@ const LoginPage = () => {
                     <div className="flex flex-col gap-3 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <button
                             onClick={startMiniAppAuth}
-                            className="w-full h-14 bg-[#FF0000] text-white rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[#FF0000]/20"
+                            className="w-full h-14 bg-[#1DB954] text-black rounded-2xl flex items-center justify-center gap-3 font-black text-xs uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[#1DB954]/20"
                         >
                             <Smartphone size={18} />
                             Login via Telegram App
@@ -179,14 +179,14 @@ const LoginPage = () => {
                                 {pendingSessionId ? (
                                     <img src={qrUrl} alt="QR Code" className="w-full h-full opacity-100" />
                                 ) : (
-                                    <div className="w-8 h-8 border-2 border-[#FF0000]/20 border-t-[#FF0000] rounded-full animate-spin" />
+                                    <div className="w-8 h-8 border-2 border-[#1DB954]/20 border-t-[#1DB954] rounded-full animate-spin" />
                                 )}
                             </div>
 
                             <div className="flex flex-col gap-2">
                                 <a
                                     href={tgLinkApp}
-                                    className="w-full h-12 bg-[#FF0000] text-white rounded-xl flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-[#FF0000]/10"
+                                    className="w-full h-12 bg-[#1DB954] text-black rounded-xl flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-[#1DB954]/10"
                                 >
                                     Login with App
                                     <ExternalLink size={12} />
@@ -202,7 +202,7 @@ const LoginPage = () => {
                                         onClick={copyToClipboard}
                                         className="h-10 bg-white/5 text-white/60 rounded-xl flex items-center justify-center gap-2 font-bold text-[8px] uppercase tracking-widest hover:bg-white/10 transition-all"
                                     >
-                                        {copied ? <Check size={10} className="text-[#FF0000]" /> : <Copy size={10} />}
+                                        {copied ? <Check size={10} className="text-[#1DB954]" /> : <Copy size={10} />}
                                         {copied ? 'Done' : 'Copy link'}
                                     </button>
                                 </div>
@@ -222,9 +222,9 @@ const LoginPage = () => {
                 )}
 
                 {authMode === 'success' && (
-                    <div className="flex flex-col items-center gap-6 p-10 bg-white/5 rounded-[40px] border border-[#FF0000]/30 w-full animate-in zoom-in duration-500 shadow-2xl shadow-[#FF0000]/10">
-                        <div className="w-20 h-20 bg-[#FF0000] rounded-full flex items-center justify-center shadow-lg shadow-[#FF0000]/20 animate-bounce-subtle">
-                            <Check size={40} className="text-white stroke-[3px]" />
+                    <div className="flex flex-col items-center gap-6 p-10 bg-white/5 rounded-[40px] border border-[#1DB954]/30 w-full animate-in zoom-in duration-500 shadow-2xl shadow-[#1DB954]/10">
+                        <div className="w-20 h-20 bg-[#1DB954] rounded-full flex items-center justify-center shadow-lg shadow-[#1DB954]/20 animate-bounce-subtle">
+                            <Check size={40} className="text-black stroke-[3px]" />
                         </div>
                         <div className="space-y-2">
                             <h2 className="text-xl font-black uppercase tracking-tighter">Welcome back!</h2>
@@ -242,7 +242,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.4</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.5</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
