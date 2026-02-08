@@ -28,44 +28,60 @@ export const useAuthStore = create<AuthState>()(
             webAuthConfirmed: false,
             setWebAuthConfirmed: (confirmed) => set({ webAuthConfirmed: confirmed }),
             refreshProfile: async () => {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                    // Try to get profile
-                    let { data: profile } = await supabase
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', user.id)
-                        .single();
-
-                    // If not found, wait a bit for trigger and try once more
-                    if (!profile) {
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        const { data: retryProfile } = await supabase
+                try {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        // Try to get profile
+                        let { data: profile } = await supabase
                             .from('profiles')
                             .select('*')
                             .eq('id', user.id)
                             .single();
-                        profile = retryProfile;
-                    }
 
-                    // If still not found, create a basic one manually (fallback)
-                    if (!profile) {
-                        const { data: newProfile } = await supabase
-                            .from('profiles')
-                            .insert({
-                                id: user.id,
-                                username: user.user_metadata?.username || user.user_metadata?.full_name || user.email?.split('@')[0],
-                                full_name: user.user_metadata?.full_name || user.email?.split('@')[0],
-                                avatar_url: user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user.email}&background=random`,
-                                role: 'user',
-                                status: 'active'
-                            })
-                            .select()
-                            .single();
-                        profile = newProfile;
-                    }
+                        // If not found, wait a bit for trigger and try once more
+                        if (!profile) {
+                            console.log('Profile not found, waiting for trigger...');
+                            await new Promise(resolve => setTimeout(resolve, 1500));
+                            const { data: retryProfile } = await supabase
+                                .from('profiles')
+                                .select('*')
+                                .eq('id', user.id)
+                                .single();
+                            profile = retryProfile;
+                        }
 
-                    if (profile) set({ profile });
+                        // If still not found, create a basic one manually (fallback)
+                        if (!profile) {
+                            console.log('Creating fallback profile for:', user.id);
+                            const { data: newProfile, error: insertError } = await supabase
+                                .from('profiles')
+                                .insert({
+                                    id: user.id,
+                                    username: user.user_metadata?.username || user.user_metadata?.full_name || user.email?.split('@')[0],
+                                    full_name: user.user_metadata?.full_name || user.email?.split('@')[0],
+                                    avatar_url: user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user.email}&background=random`,
+                                    role: 'user',
+                                    status: 'active',
+                                    created_at: new Date().toISOString()
+                                })
+                                .select()
+                                .single();
+
+                            if (insertError) {
+                                console.error('Fallback creation failed:', insertError);
+                                localStorage.setItem('lisnet_auth_error', JSON.stringify(insertError));
+                            }
+                            profile = newProfile;
+                        }
+
+                        if (profile) {
+                            set({ profile });
+                            localStorage.removeItem('lisnet_auth_error');
+                        }
+                    }
+                } catch (err: any) {
+                    console.error('refreshProfile major error:', err);
+                    localStorage.setItem('lisnet_auth_error', err.message);
                 }
             }
         }),
