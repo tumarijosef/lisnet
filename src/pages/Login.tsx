@@ -215,6 +215,8 @@ const LoginPage = () => {
                             <div className="flex flex-col gap-2">
                                 <a
                                     href={tgLinkApp}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="w-full h-12 bg-[#1DB954] text-black rounded-xl flex items-center justify-center gap-2 font-black text-[10px] uppercase tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-[#1DB954]/10"
                                 >
                                     Login with App
@@ -223,6 +225,8 @@ const LoginPage = () => {
                                 <div className="grid grid-cols-2 gap-2">
                                     <a
                                         href={tgLinkDirect}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="h-10 bg-white/5 text-white/60 rounded-xl flex items-center justify-center font-bold text-[8px] uppercase tracking-widest hover:bg-white/10 transition-all"
                                     >
                                         Alt Link
@@ -271,7 +275,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.3.0</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.3.1</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
