@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { supabase } from './lib/supabase';
 import Layout from './components/Layout';
 import Feed from './pages/Feed';
 import Store from './pages/Store';
@@ -27,7 +28,7 @@ import { useEffect } from 'react';
 import { Check, Smartphone, ArrowRight } from 'lucide-react';
 
 function App() {
-    const { loading, profile, webAuthConfirmed, setWebAuthConfirmed } = useAuthStore();
+    const { loading, profile, webAuthConfirmed, setWebAuthConfirmed, refreshProfile, setLoading } = useAuthStore();
     const { tg } = useTelegram(); // Initialize Telegram WebApp and sync user
     const { theme } = useThemeStore();
 
@@ -36,6 +37,30 @@ function App() {
         root.classList.remove('theme-original', 'theme-skynet');
         root.classList.add(`theme-${theme}`);
     }, [theme]);
+
+    useEffect(() => {
+        // Listen for Supabase auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                await refreshProfile();
+                setLoading(false);
+            } else if (event === 'SIGNED_OUT') {
+                setLoading(false);
+            }
+        });
+
+        // Check current session on mount
+        const initAuth = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                await refreshProfile();
+            }
+            setLoading(false);
+        };
+        initAuth();
+
+        return () => subscription.unsubscribe();
+    }, [refreshProfile, setLoading]);
 
     if (loading) {
         return (
