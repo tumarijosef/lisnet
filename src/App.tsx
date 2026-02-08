@@ -40,21 +40,20 @@ function App() {
 
     useEffect(() => {
         // Handle OAuth hash tokens explicitly if present
-        if (window.location.hash.includes('access_token=')) {
+        const hasHashToken = window.location.hash.includes('access_token=') ||
+            window.location.hash.includes('id_token=') ||
+            window.location.hash.includes('refresh_token=');
+
+        if (hasHashToken) {
             setLoading(true);
-            supabase.auth.getSession().then(({ data: { session } }) => {
-                if (session) refreshProfile().finally(() => setLoading(false));
-                else setLoading(false);
-            });
         }
 
         // Listen for Supabase auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN' && session) {
+            console.log('Auth Event:', event); // Debug log
+
+            if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
                 setLoading(true);
-                await refreshProfile();
-                setLoading(false);
-            } else if (event === 'INITIAL_SESSION' && session) {
                 await refreshProfile();
                 setLoading(false);
             } else if (event === 'SIGNED_OUT') {
@@ -62,7 +61,7 @@ function App() {
             }
         });
 
-        // Check current session on mount (Redundant but safe)
+        // Check current session on mount
         const initAuth = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
@@ -70,7 +69,10 @@ function App() {
                     await refreshProfile();
                 }
             } finally {
-                setLoading(false);
+                // Only stop loading if we DON'T have a hash token we're still processing
+                if (!hasHashToken) {
+                    setLoading(false);
+                }
             }
         };
         initAuth();
