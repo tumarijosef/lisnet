@@ -283,7 +283,7 @@ const FloatingPlayer = () => {
     return (
         <div
             onClick={() => setIsExpanded(true)}
-            className="fixed bottom-[96px] md:bottom-0 left-0 md:left-64 right-0 mini-player-container p-2 pl-4 flex items-center justify-between z-[200] animate-in slide-in-from-bottom overflow-hidden cursor-pointer border-t border-white/10"
+            className="fixed bottom-[96px] md:bottom-0 left-0 right-0 mini-player-container p-2 pl-4 flex items-center justify-between z-[200] animate-in slide-in-from-bottom overflow-hidden cursor-pointer border-t border-white/10"
             style={{ backgroundColor: '#181818' }}
         >
             <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onEnded={playNext} />

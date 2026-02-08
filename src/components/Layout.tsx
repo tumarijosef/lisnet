@@ -1,18 +1,18 @@
 import { Outlet } from 'react-router-dom';
 import BottomNav from './BottomNav';
-import Sidebar from './Sidebar';
+import Topbar from './Topbar';
 import FloatingPlayer from './FloatingPlayer';
 
 const Layout = () => {
     return (
-        <div className="min-h-screen bg-[#121212] text-white flex">
-            {/* Desktop Sidebar */}
-            <div className="hidden md:block w-64 shrink-0">
-                <Sidebar />
+        <div className="min-h-screen bg-[#121212] text-white flex flex-col">
+            {/* Desktop Topbar */}
+            <div className="hidden md:block">
+                <Topbar />
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col min-w-0 relative">
+            <div className="flex-1 flex flex-col min-w-0 pt-0 md:pt-20 relative">
                 <main className="flex-1 w-full max-w-5xl mx-auto pb-40 md:pb-32">
                     <Outlet />
                 </main>
