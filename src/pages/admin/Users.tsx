@@ -150,17 +150,18 @@ const Users = () => {
         if (!window.confirm(`Are you sure you want to permanently delete user ${user.full_name}? This will only remove their LISNET profile, not their Telegram record.`)) return;
 
         try {
-            const { error } = await supabase
-                .from('profiles')
-                .delete()
-                .eq('id', user.id);
+            // Use RPC to bypass RLS and handle cleanup of dependent data
+            const { error } = await supabase.rpc('delete_user_by_admin', {
+                target_user_id: user.id
+            });
 
             if (error) throw error;
 
-            setUsers(users.filter(u => u.id !== user.id));
+            // Success: Remove from local state
+            setUsers(prev => prev.filter(u => u.id !== user.id));
         } catch (error: any) {
             console.error('Error deleting user:', error);
-            alert(`Error deleting user: ${error.message}`);
+            alert(`Error deleting user: ${error.message || 'Check database permissions'}`);
         }
     };
 
