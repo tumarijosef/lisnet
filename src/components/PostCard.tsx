@@ -4,6 +4,7 @@ import { Heart, MessageSquare, Share2, MoreHorizontal, User } from 'lucide-react
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/useAuthStore';
 import { formatDistanceToNow } from 'date-fns';
+import { twMerge } from 'tailwind-merge';
 
 interface PostCardProps {
     post: any;
@@ -69,7 +70,7 @@ const PostCard = ({ post, onLikeToggle }: PostCardProps) => {
         setLoadingComments(true);
         const { data } = await supabase
             .from('post_comments')
-            .select('*, user:profiles(id, full_name, avatar_url, username)')
+            .select('*, user:profiles(id, full_name, avatar_url, username, role)')
             .eq('post_id', post.id)
             .order('created_at', { ascending: true });
 
@@ -102,7 +103,11 @@ const PostCard = ({ post, onLikeToggle }: PostCardProps) => {
             <div className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div
-                        className="w-10 h-10 rounded-full border border-[#1DB954]/20 p-0.5 cursor-pointer active:scale-95 transition-transform"
+                        className={twMerge(
+                            "w-10 h-10 rounded-full border-2 p-0.5 cursor-pointer active:scale-95 transition-all duration-500",
+                            post.user?.role === 'admin' ? "border-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.3)]" :
+                                post.user?.role === 'artist' ? "border-[#1DB954]" : "border-[#1DB954]/20"
+                        )}
                         onClick={() => navigateToProfile(post.user_id)}
                     >
                         <img
@@ -179,7 +184,11 @@ const PostCard = ({ post, onLikeToggle }: PostCardProps) => {
                             comments.map((c: any) => (
                                 <div key={c.id} className="flex gap-3">
                                     <div
-                                        className="w-6 h-6 rounded-full border border-white/10 shrink-0 cursor-pointer active:scale-90 transition-transform"
+                                        className={twMerge(
+                                            "w-6 h-6 rounded-full border shrink-0 cursor-pointer active:scale-90 transition-all duration-500",
+                                            c.user?.role === 'admin' ? "border-[#FFD700] shadow-[0_0_10px_rgba(255,215,0,0.3)]" :
+                                                c.user?.role === 'artist' ? "border-[#1DB954]" : "border-white/10"
+                                        )}
                                         onClick={() => navigateToProfile(c.user_id)}
                                     >
                                         <img src={c.user?.avatar_url || `https://ui-avatars.com/api/?name=${c.user?.username}&background=random`} className="w-full h-full object-cover rounded-full" alt="" />

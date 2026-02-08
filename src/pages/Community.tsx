@@ -13,6 +13,7 @@ import { useLibraryStore } from '../store/useLibraryStore';
 import CreatePostModal from '../components/CreatePostModal';
 import CommunityFeed from '../components/CommunityFeed';
 import { Plus } from 'lucide-react';
+import { twMerge } from 'tailwind-merge';
 
 const Community = () => {
     const navigate = useNavigate();
@@ -44,7 +45,7 @@ const Community = () => {
             // 2. Fetch Suggested Users (excluding self)
             const { data: users } = await supabase
                 .from('profiles')
-                .select('id, full_name, username, avatar_url')
+                .select('id, full_name, username, avatar_url, role')
                 .neq('id', profile.id)
                 .limit(8);
             setSuggestedUsers(users || []);
@@ -96,7 +97,11 @@ const Community = () => {
 
                     <div className="relative bg-gradient-to-br from-white/10 to-white/[0.02] backdrop-blur-xl border border-white/10 p-5 rounded-[2rem] shadow-2xl">
                         <div className="flex justify-between items-start mb-4">
-                            <div className="w-16 h-16 rounded-full border-2 border-[#1DB954] p-1 shadow-[0_0_20px_rgba(29,185,84,0.2)]">
+                            <div className={twMerge(
+                                "w-16 h-16 rounded-full border-2 p-1 transition-all duration-500",
+                                profile.role === 'admin' ? "border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.4)]" :
+                                    profile.role === 'artist' ? "border-[#1DB954] shadow-[0_0_20px_rgba(29,185,84,0.3)]" : "border-[#1DB954]/20"
+                            )}>
                                 <img
                                     src={profile.avatar_url}
                                     alt={profile.full_name}
@@ -118,7 +123,9 @@ const Community = () => {
                                     @{profile.username || `tg_${profile.telegram_id}`}
                                 </p>
                                 <span className="w-1 h-1 rounded-full bg-white/20"></span>
-                                <p className="text-[9px] text-white/40 uppercase font-black tracking-tighter">Telegram Member</p>
+                                <p className="text-[9px] text-white/40 uppercase font-black tracking-tighter">
+                                    {profile.role === 'admin' ? 'System Administrator' : profile.role === 'artist' ? 'Verified Artist' : 'Telegram Member'}
+                                </p>
                             </div>
                         </div>
 
@@ -153,7 +160,11 @@ const Community = () => {
                                 onClick={() => navigate(`/profile/${u.id}`, { state: { activeTab: 'posts' } })}
                                 className="bg-white/[0.03] border border-white/5 p-4 rounded-3xl flex flex-col items-center gap-3 shrink-0 w-28 active:scale-95 transition-all text-center group"
                             >
-                                <div className="w-14 h-14 rounded-full overflow-hidden border border-[#1DB954]/20 p-1">
+                                <div className={twMerge(
+                                    "w-14 h-14 rounded-full overflow-hidden border-2 p-1 transition-all duration-500",
+                                    u.role === 'admin' ? "border-[#FFD700] shadow-[0_0_10px_rgba(255,215,0,0.3)]" :
+                                        u.role === 'artist' ? "border-[#1DB954] shadow-[0_0_10px_rgba(29,185,84,0.2)]" : "border-white/10"
+                                )}>
                                     <img src={u.avatar_url || `https://ui-avatars.com/api/?name=${u.username}&background=random`} className="w-full h-full object-cover rounded-full" alt="" />
                                 </div>
                                 <div className="min-w-0 w-full">

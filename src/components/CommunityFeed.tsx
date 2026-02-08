@@ -11,7 +11,7 @@ const CommunityFeed = () => {
         try {
             const { data, error } = await supabase
                 .from('posts')
-                .select('*, user:profiles(full_name, avatar_url, username)')
+                .select('*, user:profiles(full_name, avatar_url, username, role)')
                 .order('created_at', { ascending: false });
 
             if (error) throw error;

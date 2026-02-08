@@ -8,6 +8,7 @@ import { translations } from '../lib/translations';
 import { useTracks, Track } from '../hooks/useTracks';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types';
+import { twMerge } from 'tailwind-merge';
 
 const GENRE_COLORS = [
     'from-red-600 to-red-900',
@@ -203,7 +204,11 @@ const Search = () => {
                                         onClick={() => navigate(`/profile/${user.id}`)}
                                         className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 cursor-pointer group transition-all active:scale-[0.98]"
                                     >
-                                        <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shrink-0 shadow-lg">
+                                        <div className={twMerge(
+                                            "w-12 h-12 rounded-full overflow-hidden border-2 shrink-0 shadow-lg transition-all duration-500",
+                                            user.role === 'admin' ? "border-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.3)]" :
+                                                user.role === 'artist' ? "border-[#1DB954]" : "border-white/10"
+                                        )}>
                                             {user.avatar_url ? (
                                                 <img src={user.avatar_url} className="w-full h-full object-cover" alt="" />
                                             ) : (
