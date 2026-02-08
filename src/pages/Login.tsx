@@ -34,36 +34,23 @@ const LoginPage = () => {
     useEffect(() => {
         if (!pendingSessionId || authMode !== 'mini-app') return;
 
-        console.log('Safari Debug: Starting poll for', pendingSessionId);
-
         const interval = setInterval(async () => {
-            // Adding a filter that doesn't change anything but forces a fresh request
             const { data, error } = await supabase
                 .from('web_auth_sessions')
                 .select('*')
                 .eq('id', pendingSessionId)
                 .single();
 
-            if (error) {
-                console.error('Safari Debug: Poll error', error);
-                return;
-            }
+            if (error) return;
 
-            if (data) {
-                console.log('Safari Debug: Session status', data.status);
-                if (data.status === 'confirmed' && data.user_data) {
-                    clearInterval(interval);
-                    setUserData(data.user_data);
-                    setAuthMode('success');
-                    console.log('Safari Debug: Auth success!');
-                }
+            if (data && data.status === 'confirmed' && data.user_data) {
+                clearInterval(interval);
+                setUserData(data.user_data);
+                setAuthMode('success');
             }
-        }, 1000); // Poll every 1 second for better responsiveness
+        }, 1000);
 
-        return () => {
-            console.log('Safari Debug: Stopping poll');
-            clearInterval(interval);
-        };
+        return () => clearInterval(interval);
     }, [pendingSessionId, authMode]);
 
     const handleAuthSuccess = async (user: any) => {
@@ -306,7 +293,7 @@ const LoginPage = () => {
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.3.4</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.3.5</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
