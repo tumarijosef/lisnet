@@ -8,8 +8,9 @@ const LoginPage = () => {
     const { setProfile, setLoading: setStoreLoading } = useAuthStore();
     const { fetchLibrary } = useLibraryStore();
     const widgetRef = useRef<HTMLDivElement>(null);
-    const [authMode, setAuthMode] = useState<'selection' | 'widget' | 'mini-app'>('selection');
+    const [authMode, setAuthMode] = useState<'selection' | 'widget' | 'mini-app' | 'success'>('selection');
     const [pendingSessionId, setPendingSessionId] = useState<string | null>(null);
+    const [userData, setUserData] = useState<any>(null);
     const [copied, setCopied] = useState(false);
 
     useEffect(() => {
@@ -37,7 +38,8 @@ const LoginPage = () => {
 
             if (data && data.status === 'confirmed' && data.user_data) {
                 clearInterval(interval);
-                handleAuthSuccess(data.user_data);
+                setUserData(data.user_data);
+                setAuthMode('success');
             }
         }, 1500);
 
@@ -62,6 +64,12 @@ const LoginPage = () => {
             console.error('Auth error:', err);
         } finally {
             setStoreLoading(false);
+        }
+    };
+
+    const enterSite = () => {
+        if (userData) {
+            handleAuthSuccess(userData);
         }
     };
 
@@ -190,11 +198,29 @@ const LoginPage = () => {
                         <button onClick={() => setAuthMode('selection')} className="text-[10px] text-white/30 uppercase font-black hover:text-white pt-4">Back to home</button>
                     </div>
                 )}
+
+                {authMode === 'success' && (
+                    <div className="flex flex-col items-center gap-6 p-10 bg-white/5 rounded-[40px] border border-[#1DB954]/30 w-full animate-in zoom-in duration-500 shadow-2xl shadow-[#1DB954]/10">
+                        <div className="w-20 h-20 bg-[#1DB954] rounded-full flex items-center justify-center shadow-lg shadow-[#1DB954]/20 animate-bounce-subtle">
+                            <Check size={40} className="text-black stroke-[3px]" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-xl font-black uppercase tracking-tighter">Welcome back!</h2>
+                            <p className="text-white/40 text-[10px] uppercase font-bold tracking-[0.2em]">Authentication successful</p>
+                        </div>
+                        <button
+                            onClick={enterSite}
+                            className="w-full h-14 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl"
+                        >
+                            Enter Lisnet
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="absolute bottom-8 flex items-center gap-4">
                 <div className="h-px w-6 bg-white/5"></div>
-                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.0.9</div>
+                <div className="text-[9px] font-black text-white/10 tracking-[0.4em] uppercase">Lisnet Web v1.1.0</div>
                 <div className="h-px w-6 bg-white/5"></div>
             </div>
         </div>
